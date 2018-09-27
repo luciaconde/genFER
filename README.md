@@ -1,22 +1,22 @@
 # genFER
 CNN-based pipeline for generalized facial expression recognition
 
-File structure of the current version of the project:
+#### File structure of project (current version)
 ```
 genFER
 │   README.md
-│   faceDetectorExtraction.sh
-│   video_processor.py
-│   cnn_trainer.py
-│   dataset.py
-│   cnn_tester.py
-│   predict_video.py
+│   faceDetectorExtraction.sh: calls OpenFace's CLI option for feature extraction
+│   video_processor.py: processes the extracted face images and orders them for training
+│   cnn_trainer.py: trains the convolutional neural network while performing k-fold cross-validation
+│   dataset.py: loads and processes the stored face images for training
+│   cnn_tester.py: tests (during training) the current model of the convolutional neural network
+│   predict_video.py: performs a per-frame facial expression classification of a specific video
 │
 └───data
-│   └───test_videos
+│   └───test_videos: contains the video(s) to be classified (using predict_video.py)
 │   |   │   example_video_for_testing.mp4
 │   │
-│   └───classes
+│   └───classes: contains the extracted face images ordered per annotated facial expression
 │   |   └───facial_expression1
 │   |   └───facial_expression2
 │   |   │   ...
@@ -26,17 +26,17 @@ genFER
 |   |       |   ...
 |   |       |   face_imageY.bmp
 |   |
-│   └───videos
-|   |   |   training_video1.mp4
-|   |   |   training_video2.mp4
-|   |   |   ...
-|   |   |   training_videoZ.mp4
-|   |
-|   └───annotations
-|   |   |   training_video1_annot.csv
-|   |   |   training_video2_annot.csv
-|   |   |   ...
-|   |   |   training_videoZ_annot.csv
+│   └───videos: contains the videos to be used during training
+|       |   training_video1.mp4
+|       |   training_video2.mp4
+|       |   ...
+|       |   training_videoZ.mp4
+|       |
+|       └───annotations: contains the (manually tagged) annotations for the training videos
+|           |   training_video1_annot.csv
+|           |   training_video2_annot.csv
+|           |   ...
+|           |   training_videoZ_annot.csv
 |
 └───notes
     │   Instructions.txt
