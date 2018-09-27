@@ -1,0 +1,22 @@
+WORKING PIPELINE
+
+For training:
+
+(0a. In data/classes/, create a folder for every expression to be detected/predicted. In cnn_trainer.py and cnn_tester.py, inside the 'classes' array, write all the facial expression labels.
+
+0b. Place the videos for training in data/videos/, and their corresponding annotations in data/videos/annotations/ with the format videotitle_annot.csv)
+
+1. Run video_processor.py to call to OpenFace and process its output data in order to be used by the classifier.
+
+2. Enter the virtual environment called facialexp
+	source facialexp/bin/activate
+
+3. Run cnn_trainer.py
+
+For testing:
+
+(0a. Place the video to be tested in data/test_videos
+
+0b. In predict_video.py, change the value of the variable video_name to the name of the video file to be tested)
+
+1. Run predict_video.py

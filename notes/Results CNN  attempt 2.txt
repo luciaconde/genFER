@@ -1,0 +1,17 @@
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['concerned', 'enthusiastic', 'happy', 'sad', 'serious']
+[[ 273    0    2    8   88]
+ [   0  274   15    1  194]
+ [  15   22  153    0  170]
+ [   0    0    0  188   55]
+ [  20  113   65   45 1389]]
+              precision    recall  f1-score   support
+
+   concerned       0.89      0.74      0.80       371
+enthusiastic       0.67      0.57      0.61       484
+       happy       0.65      0.42      0.51       360
+         sad       0.78      0.77      0.78       243
+     serious       0.73      0.85      0.79      1632
+
+ avg / total       0.74      0.74      0.73      3090
+
