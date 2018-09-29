@@ -2,7 +2,8 @@ import os
 import csv
 import shutil
 import numpy as np
-
+import cv2
+import glob
 
 def readAnnotations(annotFile):
     '''
@@ -71,12 +72,26 @@ def orderExtractedFrames(video_name,starting_frames,ending_frames,labels):
         moveFramesNoOverwriting(frame, frames_path +"/", "data/classes/"+labels[range_counter]+"/")
         frame_counter += 1
 
+def preprocessExtractedFrames(frames_path, classes):
+    for fields in classes:   
+        index = classes.index(fields)
+        # The dataset images are stored in subfolders named with the corresponding class label
+        # therefore the subfolder name determines the class of each of the loaded images
+        path = os.path.join(frames_path, fields, '*.bmp')
+        files = glob.glob(path)
+        for fl in files:
+            image = cv2.imread(fl)
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            image = cv2.equalizeHist(image)
+            cv2.imwrite(fl, image)
+
 # VIDEO PROCESSOR
 
 # Get the list of names of the video files
 videos_path = "data/videos/"
 videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
-print videosList
+#print videosList
+classes = ['concerned','enthusiastic','happy','sad','serious']
 
 for video in videosList:
     if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
@@ -88,6 +103,5 @@ for video in videosList:
         starting_frames, ending_frames, labels = readAnnotations(annot_name)
         # Move frames to corresponding class folders
         orderExtractedFrames(video_name,starting_frames,ending_frames,labels)
-        # Perform data augmentation TBD!
 
-
+preprocessExtractedFrames('data/classes',classes)

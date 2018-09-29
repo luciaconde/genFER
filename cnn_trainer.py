@@ -46,11 +46,11 @@ own_num_filters_conv1 = 32
 own_filter_size_conv2 = 1
 own_num_filters_conv2 = 64
 
-own_filter_size_conv4 = 3
-own_num_filters_conv4 = 256
-
-own_filter_size_conv3 = 5
+own_filter_size_conv3 = 3
 own_num_filters_conv3 = 96
+
+own_filter_size_conv4 = 5
+own_num_filters_conv4 = 256
 
 own_fc_layer_size = 256
 own_fc_layer_size2 = 90
@@ -144,11 +144,11 @@ for j in range(nfolds):
                    num_input_channels=own_num_filters_conv1,
                    conv_filter_size=own_filter_size_conv2,
                    num_filters=own_num_filters_conv2,
-                   conv_stride=1,
+                   conv_stride=2,
                    pool_filter_size=2,
                    pool_stride=2)
 
-    layer_conv3= create_convolutional_layer(input=layer_conv2,
+    layer_conv3 = create_convolutional_layer(input=layer_conv2,
                    num_input_channels=own_num_filters_conv2,
                    conv_filter_size=own_filter_size_conv3,
                    num_filters=own_num_filters_conv3,
@@ -156,7 +156,7 @@ for j in range(nfolds):
                    pool_filter_size=2,
                    pool_stride=2)
 
-    layer_conv4= create_convolutional_layer(input=layer_conv3,
+    layer_conv4 = create_convolutional_layer(input=layer_conv3,
                    num_input_channels=own_num_filters_conv3,
                    conv_filter_size=own_filter_size_conv4,
                    num_filters=own_num_filters_conv4,
@@ -171,7 +171,9 @@ for j in range(nfolds):
                          num_outputs=own_fc_layer_size,
                          use_relu=True)
 
-    layer_fc2 = create_fc_layer(input=layer_fc1,
+    layer_fc1_do = tf.nn.dropout(layer_fc1, keep_prob=0.5)
+
+    layer_fc2 = create_fc_layer(input=layer_fc1_do,
                          num_inputs=own_fc_layer_size,
                          num_outputs=own_fc_layer_size2,
                          use_relu=True)
@@ -232,7 +234,7 @@ for j in range(nfolds):
         total_iterations += num_iteration
     print "STARTING NEW TRAINING --- TEST FOLD: {} OUT OF {}".format(j+1,nfolds)
     
-    train(num_iteration=1200)
+    train(num_iteration=1100)
     print "Finished training for test fold",format(j)
 
     # Store the current test dataset (the fold not used during training)
