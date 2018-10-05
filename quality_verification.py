@@ -64,13 +64,13 @@ def loadCSVData(video_path, video_name):
 
     return np.array(confidence), np.array(success), np.array(eye_separation), np.array(nose_separation)
 
-def checkConfidenceLevels(num_frames, confidence, threshold_confid, threshold_frames):
+def checkConfidenceLevels(num_frames, confidence, confid_thres, frames_thres):
     discardVideo = False
     bad_frames = 0
     for element in confidence:
-        if element < threshold_confid:
+        if element < confid_thres:
             bad_frames += 1
-    if float(bad_frames)/float(num_frames) >= threshold_frames:
+    if float(bad_frames)/float(num_frames) >= frames_thres:
         discardVideo = True
     return discardVideo
     
@@ -84,37 +84,97 @@ def checkSuccessLevels(num_frames, success, threshold):
         discardVideo = True
     return discardVideo
 
-def checkShapeDeformation(eyes_sep, nose_sep):
+def checkShapeDeformation(eyes_sep, nose_sep, distance_thres):
     discardVideo = False
-    if np.std(eyes_sep) >= 100.0 or np.std(nose_sep) >= 100.0:
+    # If standard deviation of the per-frame distances surpasses 1cm, discard the video
+    if np.std(eyes_sep) >= distance_thres or np.std(nose_sep) >= distance_thres:
         discardVideo = True
+    return discardVideo
+
+def overUnderExposureFrame(frame, brightness_thres, darkness_thres):
+    result = 0 # 0 = image is correctly exposed, 1 = overexposure, 2 = underexposure
+    # Load frame image
+    img = cv2.imread(frame)
+    # Convert to grayscale
+    frame_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Find the mask of pixels that are close to the dark and bright ranges
+    dark_part = cv2.inRange(frame_gray, 0, 30)
+    bright_part = cv2.inRange(frame_gray, 220, 255)
+    # Sum the number of pixels
+    total_pixels = np.size(frame_gray)
+    dark_pixels = np.sum(dark_part > 0)
+    bright_pixels = np.sum(bright_part > 0)
+    # See if the proportions of dark/bright pixels exceed a certain threshold
+    if float(dark_pixels)/total_pixels > darkness_thres:
+        result = 2
+    if float(bright_pixels)/total_pixels > brightness_thres:
+        result = 1
+    return result
+
+def overUnderExposure(frames_path, bright_thres, dark_thres, total_bright_th, total_dark_th):
+    # Access the folder containing the extracted face bounding box images
+    discardVideo = False
+    frame_counter = 0
+    range_counter = 0
+    exp_classif = [0, 0, 0] # Counters for correctly exposed, overexposed and underexposed frames, respectively
+
+    # Get the list of names of the frames image files
+    frames_list = os.listdir(frames_path)
+    frames_list.sort()
+    for frame in frames_list:
+        # Add a unit to the corresponding counter, depending on the exposure levels of the frame
+        exp_classif[overUnderExposureFrame(frames_path+frame, bright_thres, dark_thres)] += 1
+
+    total_frames = exp_classif[0] + exp_classif[1] + exp_classif[2]
+    if total_frames != 0:
+        if float(exp_classif[1])/total_frames > total_bright_th or float(exp_classif[2])/total_frames > total_dark_th: # If the video is either overexposed or underexposed, discard it
+            discardVideo = True
+    else:
+        print 'Frames folder is empty!'
+
     return discardVideo
 
 
 def verifyQuality(video_path, video_name):
     # Main function where to include calls to rest of image quality verification functions
     discardVideo = False
+    frames_path = video_path + video_name + '_aligned/'
     # Load all relevant data from the CSV file
     confidence, success, eyes_sep, nose_sep = loadCSVData(video_path, video_name)
-    print 'CONFIDENCE LEVELS:'
+
+    confidence_thres = 0.85
+    conf_frames_th = 0.1
+    success_thres = 0.9
+    shape_dst_thres = 100.0
+    bright_thres = 0.4
+    dark_thres = 0.4
+    frames_bright_th = 0.2
+    frames_dark_th = 0.2
+
+    '''print 'CONFIDENCE LEVELS:'
     print confidence
     print 'NOSE SEPARATION PER FRAME:'
-    print nose_sep
+    print nose_sep'''
     num_frames = len(confidence)
 
     # Start verifying every criterion; if one is not met, directly discard the video
-    discardVideo = checkConfidenceLevels(num_frames, confidence, 0.9, 0.1)
+    discardVideo = checkConfidenceLevels(num_frames, confidence, confidence_thres, conf_frames_th)
+    print 'Discard video after confidence check: '+str(discardVideo)
     if not discardVideo:
         # Check success levels
-        discardVideo = checkSuccessLevels(num_frames, success, 0.9)
-    
-    if not discardVideo:
-        # Check distances between eyes and nostrils
-        checkShapeDeformation(eyes_sep, nose_sep)
+        discardVideo = checkSuccessLevels(num_frames, success, success_thres)
+        print 'Discard video after success check: '+str(discardVideo)
+        if not discardVideo:
+            # Check distances between eyes and nostrils
+            discardVideo = checkShapeDeformation(eyes_sep, nose_sep, shape_dst_thres)
+            print 'Discard video after shape def. check: '+str(discardVideo)
+            if not discardVideo:
+                discardVideo = overUnderExposure(frames_path, bright_thres, dark_thres, frames_bright_th, frames_dark_th)
+                print 'Discard video after img exposure check: '+str(discardVideo)
 
     return discardVideo
 
 
 # TEST 1
-discardVideo = verifyQuality('data/videos/','myrecording4')
+discardVideo = verifyQuality('data/videos/','testvideo1')
 print discardVideo
