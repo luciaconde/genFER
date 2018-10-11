@@ -39,6 +39,15 @@ def calculate3DDistance(p1, p2):
     dst = np.sqrt(sqrt_dst)
     return dst
 
+def verifyOpenFaceOutput(video_path, video_name):
+    isCorrect = True
+    try:
+        f = open(video_path+video_name+".csv", "rt")
+        f.close()
+    except IOError:
+        isCorrect = False
+    return isCorrect
+
 def loadCSVData(video_path, video_name):
     f = open(video_path+video_name+".csv", "rt")
     reader = csv.reader(f, delimiter=',')
@@ -185,8 +194,6 @@ def verifyQuality(video_path, video_name):
     # Main function where to include calls to rest of image quality verification functions
     discardVideo = False
     frames_path = video_path + video_name + '_aligned/'
-    # Load all relevant data from the CSV file
-    confidence, success, eyes_sep, nose_sep = loadCSVData(video_path, video_name)
 
     confidence_thres = 0.85
     conf_frames_th = 0.1
@@ -196,33 +203,36 @@ def verifyQuality(video_path, video_name):
     dark_thres = 0.4
     frames_bright_th = 0.2
     frames_dark_th = 0.2
-    similarity_thres = 0.7
-    simil_total_thres = 0.3
-
-    '''print 'CONFIDENCE LEVELS:'
-    print confidence
-    print 'NOSE SEPARATION PER FRAME:'
-    print nose_sep'''
-    num_frames = len(confidence)
+    similarity_thres = 0.85
+    simil_total_thres = 0.5
 
     # Start verifying every criterion; if one is not met, directly discard the video
-    discardVideo = checkConfidenceLevels(num_frames, confidence, confidence_thres, conf_frames_th)
-    print 'Discard video after confidence check: '+str(discardVideo)
-    if not discardVideo:
-        # Check success levels
-        discardVideo = checkSuccessLevels(num_frames, success, success_thres)
-        print 'Discard video after success check: '+str(discardVideo)
+    if verifyOpenFaceOutput(video_path, video_name): # Only continue if the OpenFace processing went well
+        # Load all relevant data from the CSV file
+        confidence, success, eyes_sep, nose_sep = loadCSVData(video_path, video_name)
+        '''print 'CONFIDENCE LEVELS:'
+        print confidence
+        print 'NOSE SEPARATION PER FRAME:'
+        print nose_sep'''
+        num_frames = len(confidence)
+        discardVideo = checkConfidenceLevels(num_frames, confidence, confidence_thres, conf_frames_th)
+        print 'Discard video after confidence check: '+str(discardVideo)
         if not discardVideo:
-            # Check distances between eyes and nostrils
-            discardVideo = checkShapeDeformation(eyes_sep, nose_sep, shape_dst_thres)
-            print 'Discard video after shape def. check: '+str(discardVideo)
+            # Check success levels
+            discardVideo = checkSuccessLevels(num_frames, success, success_thres)
+            print 'Discard video after success check: '+str(discardVideo)
             if not discardVideo:
-                discardVideo = overUnderExposure(frames_path, bright_thres, dark_thres, frames_bright_th, frames_dark_th)
-                print 'Discard video after img exposure check: '+str(discardVideo)
+                # Check distances between eyes and nostrils
+                discardVideo = checkShapeDeformation(eyes_sep, nose_sep, shape_dst_thres)
+                print 'Discard video after shape def. check: '+str(discardVideo)
                 if not discardVideo:
-                    discardVideo = sideLighting(frames_path, num_frames, similarity_thres, simil_total_thres)
-                    print 'Discard video after side lighting check: '+str(discardVideo)
-
+                    discardVideo = overUnderExposure(frames_path, bright_thres, dark_thres, frames_bright_th, frames_dark_th)
+                    print 'Discard video after img exposure check: '+str(discardVideo)
+                    if not discardVideo:
+                        discardVideo = sideLighting(frames_path, num_frames, similarity_thres, simil_total_thres)
+                        print 'Discard video after side lighting check: '+str(discardVideo)
+    else:
+        discardVideo = True # if the video cannot be processed by OpenFace, discard it
     return discardVideo
 
 def runQualityVerification(videos_path, list_videos):
@@ -241,9 +251,10 @@ def runQualityVerification(videos_path, list_videos):
             
 
 
-#runQualityVerification("data/videos/non-annotated/","discarded_videos.txt")
+runQualityVerification("data/videos/non-annotated/","discarded_videos.txt")
 
 
+'''# TEST
 print 'Testing video with strong side lighting...'
 discardVideo = verifyQuality('data/videos/non-annotated/','myrecording3')
 print '\nTesting video with low light conditions...'
@@ -251,7 +262,7 @@ discardVideo = verifyQuality('data/videos/non-annotated/','testvideo1')
 print '\nTesting good quality video...'
 discardVideo = verifyQuality('data/videos/non-annotated/','myrecording4')
 print '\nTesting apparently good quality video...'
-discardVideo = verifyQuality('data/videos/non-annotated/','user_response_2908105')
+discardVideo = verifyQuality('data/videos/non-annotated/','user_response_2908105')'''
 
 
 
