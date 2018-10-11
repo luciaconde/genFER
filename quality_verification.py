@@ -4,6 +4,8 @@ import shutil
 import numpy as np
 import cv2
 
+#from matplotlib import pyplot as plt
+
 eye_corner_left = 39
 eye_corner_right = 42
 nose_side_left = 31
@@ -134,6 +136,49 @@ def overUnderExposure(frames_path, bright_thres, dark_thres, total_bright_th, to
 
     return discardVideo
 
+def sideLightingFrame(frame_path, simil_thres):
+    frame = cv2.imread(frame_path)
+    frame_hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    
+    # Create a mask for selecting the left side
+    mask_left = np.zeros(frame.shape[:2], np.uint8)
+    mask_left[:frame.shape[0], :(frame.shape[1]/2)] = 255
+
+    mask_right = np.zeros(frame.shape[:2], np.uint8)
+    mask_right[:frame.shape[0], (frame.shape[1]/2):] = 255
+
+    ''' # Visually check if the masks are correct
+    masked_frame_left = cv2.bitwise_and(frame,frame,mask = mask_left)
+    masked_frame_right = cv2.bitwise_and(frame,frame,mask = mask_right)
+
+    plt.subplot(221), plt.imshow(frame, 'gray')
+    plt.subplot(222), plt.imshow(mask_left,'gray')
+    plt.subplot(223), plt.imshow(masked_frame_left, 'gray')
+
+    plt.xlim([0,256])
+    plt.show()'''
+
+    # Calculate histograms
+    #hist_full = cv2.calcHist([img],[0],None,[256],[0,256])
+    hist_left = cv2.calcHist([frame_hsv], [0, 1], mask_left, [180, 256], [0, 180, 0, 256])
+    hist_right = cv2.calcHist([frame_hsv], [0, 1], mask_right, [180, 256], [0, 180, 0, 256])
+
+    similarity = cv2.compareHist(hist_left, hist_right, cv2.HISTCMP_BHATTACHARYYA)
+    return similarity
+
+def sideLighting(frames_path, num_frames, simil_thres, frames_thres):
+    discardVideo = False
+    bad_frames = 0
+    
+    # Get the list of names of the frames image files
+    frames_list = os.listdir(frames_path)
+    frames_list.sort()
+    for frame in frames_list:
+        if sideLightingFrame(frames_path+frame, simil_thres) > simil_thres:
+            bad_frames += 1
+    if float(bad_frames)/float(num_frames) >= frames_thres:
+        discardVideo = True
+    return discardVideo
 
 def verifyQuality(video_path, video_name):
     # Main function where to include calls to rest of image quality verification functions
@@ -150,6 +195,8 @@ def verifyQuality(video_path, video_name):
     dark_thres = 0.4
     frames_bright_th = 0.2
     frames_dark_th = 0.2
+    similarity_thres = 0.5
+    simil_total_thres = 0.3
 
     '''print 'CONFIDENCE LEVELS:'
     print confidence
@@ -171,10 +218,21 @@ def verifyQuality(video_path, video_name):
             if not discardVideo:
                 discardVideo = overUnderExposure(frames_path, bright_thres, dark_thres, frames_bright_th, frames_dark_th)
                 print 'Discard video after img exposure check: '+str(discardVideo)
+                if not discardVideo:
+                    discardVideo = sideLighting(frames_path, num_frames, similarity_thres, simil_total_thres)
+                    print 'Discard video after side lighting check: '+str(discardVideo)
 
     return discardVideo
 
 
 # TEST 1
+print 'Testing video with strong side lighting...'
+discardVideo = verifyQuality('data/videos/','myrecording3') # example of side lighting
+print '\nTesting video with low light conditions...'
 discardVideo = verifyQuality('data/videos/','testvideo1')
+print '\nTesting good quality video...'
+discardVideo = verifyQuality('data/videos/','myrecording4')
+
 print discardVideo
+
+#sideLightingFrame('data/videos/myrecording4_aligned/frame_det_00_000010.bmp', 0.6)
