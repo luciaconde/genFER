@@ -128,6 +128,7 @@ def overUnderExposure(frames_path, bright_thres, dark_thres, total_bright_th, to
         exp_classif[overUnderExposureFrame(frames_path+frame, bright_thres, dark_thres)] += 1
 
     total_frames = exp_classif[0] + exp_classif[1] + exp_classif[2]
+    #total_frames = len(frames_list)
     if total_frames != 0:
         if float(exp_classif[1])/total_frames > total_bright_th or float(exp_classif[2])/total_frames > total_dark_th: # If the video is either overexposed or underexposed, discard it
             discardVideo = True
@@ -195,7 +196,7 @@ def verifyQuality(video_path, video_name):
     dark_thres = 0.4
     frames_bright_th = 0.2
     frames_dark_th = 0.2
-    similarity_thres = 0.5
+    similarity_thres = 0.7
     simil_total_thres = 0.3
 
     '''print 'CONFIDENCE LEVELS:'
@@ -224,15 +225,33 @@ def verifyQuality(video_path, video_name):
 
     return discardVideo
 
+def runQualityVerification(videos_path, list_videos):
+    list_discarded = open(list_videos,'wt')
+    list_discarded.write('List of low quality videos for discard:\n\n')
+    # Get the list of names of the video files
+    videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
 
-# TEST 1
+    for video in videosList:
+        if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
+            os.system('./faceDetectorExtraction.sh '+video+' '+videos_path)
+            video_name = os.path.splitext(video)[0]
+            if verifyQuality(videos_path, video_name): # If the video should be discarded,
+                list_discarded.write(video+'\n')
+    list_discarded.close()
+            
+
+
+#runQualityVerification("data/videos/non-annotated/","discarded_videos.txt")
+
+
 print 'Testing video with strong side lighting...'
-discardVideo = verifyQuality('data/videos/','myrecording3') # example of side lighting
+discardVideo = verifyQuality('data/videos/non-annotated/','myrecording3')
 print '\nTesting video with low light conditions...'
-discardVideo = verifyQuality('data/videos/','testvideo1')
+discardVideo = verifyQuality('data/videos/non-annotated/','testvideo1')
 print '\nTesting good quality video...'
-discardVideo = verifyQuality('data/videos/','myrecording4')
+discardVideo = verifyQuality('data/videos/non-annotated/','myrecording4')
+print '\nTesting apparently good quality video...'
+discardVideo = verifyQuality('data/videos/non-annotated/','user_response_2908105')
 
-print discardVideo
 
-#sideLightingFrame('data/videos/myrecording4_aligned/frame_det_00_000010.bmp', 0.6)
+
