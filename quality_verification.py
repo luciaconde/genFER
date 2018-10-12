@@ -148,7 +148,7 @@ def overUnderExposure(frames_path, bright_thres, dark_thres, total_bright_th, to
 
 def sideLightingFrame(frame_path, simil_thres):
     frame = cv2.imread(frame_path)
-    frame_hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    frame_edit = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
     
     # Create a mask for selecting the left side
     mask_left = np.zeros(frame.shape[:2], np.uint8)
@@ -170,8 +170,9 @@ def sideLightingFrame(frame_path, simil_thres):
 
     # Calculate histograms
     #hist_full = cv2.calcHist([img],[0],None,[256],[0,256])
-    hist_left = cv2.calcHist([frame_hsv], [0, 1], mask_left, [180, 256], [0, 180, 0, 256])
-    hist_right = cv2.calcHist([frame_hsv], [0, 1], mask_right, [180, 256], [0, 180, 0, 256])
+    hist_left = cv2.calcHist([frame_edit], [0, 2], mask_left, [10, 64], [0, 180, 0, 256])
+    hist_right = cv2.calcHist([frame_edit], [0, 2], mask_right, [10, 64], [0, 180, 0, 256])
+    
 
     similarity = cv2.compareHist(hist_left, hist_right, cv2.HISTCMP_BHATTACHARYYA)
     return similarity
@@ -195,6 +196,9 @@ def verifyQuality(video_path, video_name):
     discardVideo = False
     frames_path = video_path + video_name + '_aligned/'
 
+    # For testing purposes only:
+    #os.system('./faceDetectorExtraction.sh '+video_name+'.mp4'+' '+video_path)
+
     confidence_thres = 0.85
     conf_frames_th = 0.1
     success_thres = 0.9
@@ -203,8 +207,8 @@ def verifyQuality(video_path, video_name):
     dark_thres = 0.4
     frames_bright_th = 0.2
     frames_dark_th = 0.2
-    similarity_thres = 0.85
-    simil_total_thres = 0.5
+    similarity_thres = 0.6
+    simil_total_thres = 0.3
 
     # Start verifying every criterion; if one is not met, directly discard the video
     if verifyOpenFaceOutput(video_path, video_name): # Only continue if the OpenFace processing went well
@@ -251,18 +255,22 @@ def runQualityVerification(videos_path, list_videos):
             
 
 
-runQualityVerification("data/videos/non-annotated/","discarded_videos.txt")
+#runQualityVerification("data/videos/non-annotated/","discarded_videos.txt")
 
 
-'''# TEST
+# TEST
+dataset_path = 'data/videos/non-annotated/'
+examples_path = 'data/videos/'
 print 'Testing video with strong side lighting...'
-discardVideo = verifyQuality('data/videos/non-annotated/','myrecording3')
+discardVideo = verifyQuality(examples_path,'myrecording3')
 print '\nTesting video with low light conditions...'
-discardVideo = verifyQuality('data/videos/non-annotated/','testvideo1')
+discardVideo = verifyQuality(examples_path,'testvideo1')
 print '\nTesting good quality video...'
-discardVideo = verifyQuality('data/videos/non-annotated/','myrecording4')
+discardVideo = verifyQuality(examples_path,'myrecording4')
 print '\nTesting apparently good quality video...'
-discardVideo = verifyQuality('data/videos/non-annotated/','user_response_2908105')'''
+discardVideo = verifyQuality(examples_path,'user_response_2908105')
+print '\nTesting apparently good quality video (29)...'
+discardVideo = verifyQuality(examples_path,'user_response_7895501')
 
 
 
