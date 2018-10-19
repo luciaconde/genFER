@@ -194,6 +194,7 @@ def sideLighting(frames_path, num_frames, simil_thres, frames_thres):
 def verifyQuality(video_path, video_name):
     # Main function where to include calls to rest of image quality verification functions
     discardVideo = False
+    cause_code = '(unknown)'
     frames_path = video_path + video_name + '_aligned/'
 
     # For testing purposes only:
@@ -221,23 +222,29 @@ def verifyQuality(video_path, video_name):
         num_frames = len(confidence)
         discardVideo = checkConfidenceLevels(num_frames, confidence, confidence_thres, conf_frames_th)
         print 'Discard video after confidence check: '+str(discardVideo)
+        cause_code = '(low confidence)'
         if not discardVideo:
             # Check success levels
             discardVideo = checkSuccessLevels(num_frames, success, success_thres)
+            cause_code = '(low success)'
             print 'Discard video after success check: '+str(discardVideo)
             if not discardVideo:
                 # Check distances between eyes and nostrils
                 discardVideo = checkShapeDeformation(eyes_sep, nose_sep, shape_dst_thres)
+                cause_code = '(shape def.)'
                 print 'Discard video after shape def. check: '+str(discardVideo)
                 if not discardVideo:
                     discardVideo = overUnderExposure(frames_path, bright_thres, dark_thres, frames_bright_th, frames_dark_th)
+                    cause_code = '(over/under-exposure)'
                     print 'Discard video after img exposure check: '+str(discardVideo)
                     if not discardVideo:
                         discardVideo = sideLighting(frames_path, num_frames, similarity_thres, simil_total_thres)
+                        cause_code = '(strong side lighting)'
                         print 'Discard video after side lighting check: '+str(discardVideo)
     else:
         discardVideo = True # if the video cannot be processed by OpenFace, discard it
-    return discardVideo
+        cause_code = '(OpenFace wrong format)'
+    return discardVideo, cause_code
 
 def runQualityVerification(videos_path, list_videos):
     list_discarded = open(list_videos,'wt')
@@ -249,8 +256,9 @@ def runQualityVerification(videos_path, list_videos):
         if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
             os.system('./faceDetectorExtraction.sh '+video+' '+videos_path)
             video_name = os.path.splitext(video)[0]
-            if verifyQuality(videos_path, video_name): # If the video should be discarded,
-                list_discarded.write(video+'\n')
+            lowQuality, cause = verifyQuality(videos_path, video_name)
+            if lowQuality: # If the video should be discarded,
+                list_discarded.write(video+' '+cause+'\n')
     list_discarded.close()
             
 
@@ -269,7 +277,7 @@ print '\nTesting good quality video...'
 discardVideo = verifyQuality(examples_path,'myrecording4')
 print '\nTesting apparently good quality video...'
 discardVideo = verifyQuality(examples_path,'user_response_2908105')
-print '\nTesting apparently good quality video (29)...'
+print '\nTesting apparently good quality video (2)...'
 discardVideo = verifyQuality(examples_path,'user_response_7895501')
 
 

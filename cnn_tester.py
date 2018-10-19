@@ -7,18 +7,18 @@ import sklearn
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
-def testCNN(images, cls, nmodel):
+def testCNN(images, cls, nmodel, img_height, img_width):
     image_size=90
-    classes = ['concerned','enthusiastic','happy',
-               'sad','serious']
+    classes = ['positive','neutral','negative']
     num_classes = len(classes)
     predict_cls = []
-    num_channels=3
+    num_channels=1
 
     images = np.array(images)
     
     # Reshape the images to fit the format of the network input [num_images image_size image_size num_channels]
-    x_batch = images.reshape(len(images), image_size,image_size,num_channels)
+    #x_batch = images.reshape(len(images), image_size,image_size,num_channels) # normal version (non-cropped)
+    x_batch = images.reshape(len(images), img_height,img_width,num_channels)
     #x_batch = images
 
     ## Restore the saved model of the neural network (by default, the last one created) 

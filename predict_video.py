@@ -8,15 +8,18 @@ import sklearn
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
-def predictVideo(images, nmodel):
+def predictVideo(images, nmodel, img_height, img_width):
     '''Inputs each extracted aligned face image (from each frame of the video) into the trained
     neural network and store its prediction.
     Outputs the list of all predictions in order of frames.'''
     image_size=90
-    classes = ['concerned','enthusiastic','happy',
-               'sad','serious']
+    classes = ['positive','neutral','negative']
+    num_classes = len(classes)
     predict_cls = []
-    num_channels=3
+    num_channels=1
+
+    confidence = []
+    #print 'Shape of images: '+str(images.shape)
 
     images = np.array(images)
     batch_size = 32
@@ -25,7 +28,7 @@ def predictVideo(images, nmodel):
         num_batches += 1
     
     # Reshape the images to fit the format of the network input [num_images image_size image_size num_channels]
-    x_total = images.reshape(len(images), image_size,image_size,num_channels)
+    x_total = images.reshape(len(images), img_height,img_width,num_channels)
 
     batch_count = 0
     for batch in range(num_batches):
@@ -47,23 +50,28 @@ def predictVideo(images, nmodel):
         ## Feed the images to the input placeholders
         x = graph.get_tensor_by_name("x:0") 
         y_true = graph.get_tensor_by_name("y_true:0") 
-        y_test_images = np.zeros((1, 5)) # (Note that each element must have number_classes zeros to fit the labels!)
+        y_test_images = np.zeros((1, num_classes)) # (Note that each element must have number_classes zeros to fit the labels!)
 
 
         # Feed the images and the ground truth to the network needed to obtain y_pred 
         feed_dict_testing = {x: x_batch, y_true: y_test_images}
         result=sess.run(y_pred, feed_dict=feed_dict_testing)
         # result is an array with the probabilities of each image of being each of the classes
-    
 
         ### Performance measures
         # Convert the number-identified labels from the predictions to actual text labels
         for cnn_output in result:
             predict_cls.append(classes[cnn_output.argmax()])
+            level_cnf = max(cnn_output)-min(cnn_output)
+            confidence.append(level_cnf) # Save levels of confidence per frame
     
         batch_count += 1
 
-    return predict_cls
+    # Calculate overall level of confidence of the prediction
+    confidence_video = [np.mean(confidence), np.std(confidence)]
+    print 'Mean/stddev: '+str(confidence_video)
+
+    return predict_cls, confidence_video
 
 def extractFaceImages(video,videos_path):
     '''Extract all the aligned face images from the video frames through OpenFace
@@ -89,10 +97,14 @@ def loadFaceImages(video,videos_path): # videos_path should be data/test_videos/
         frame_file = frames_path + frame
         #print "File name: "+str(frame_file)
         image = cv2.imread(frame_file)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        image = cv2.equalizeHist(image)
         image = cv2.resize(image, (image_size, image_size),0,0, cv2.INTER_LINEAR)
+        image = image[0:image_size/3, 0:image_size]
         image = image.astype(np.float32)
         image = np.multiply(image, 1.0 / 255.0)
         images.append(image)
+    images = np.array(images)
 
     return images
 
@@ -187,25 +199,56 @@ def playLabeledVideo(video_path, labels):
     cv2.destroyAllWindows()
 
 ## VIDEO PREDICTOR: PER-FRAME FACIAL EXPRESSION CLASSIFIER
+def videoPredictor():
+    video_name = 'myrecording4.mp4'
+    #video_name = 'user_response_3549556.mp4'
+    video_title = os.path.splitext(video_name)[0]
+    video_path = 'data/test_videos/'
+    img_height = 30
+    img_width = 90
 
-video_name = 'user_response_3500327.mp4'
-video_title = os.path.splitext(video_name)[0]
-video_path = 'data/test_videos/'
-total_labels = []
+    extractFaceImages(video_name, video_path)
 
-extractFaceImages(video_name, video_path)
+    face_images = loadFaceImages(video_name,video_path)
 
-face_images = loadFaceImages(video_name,video_path)
-
-labels = predictVideo(face_images,4) # Predict the facial expression label for each of the face images (that is, for each video frame)
+    labels, confidence = predictVideo(face_images,4,img_height,img_width) # Predict the facial expression label for each of the face images (that is, for each video frame)
 #print 'Predicted labels: '+str(labels)
-clean_labels = cleanLabels(labels)
+    clean_labels = cleanLabels(labels)
 #print 'Cleaned labels: '+str(clean_labels)
 
-perframe_labels_areStored = savePredictionsPerFrame(clean_labels, video_path + video_title + '_predictions_perframe.csv')
-print perframe_labels_areStored
+    perframe_labels_areStored = savePredictionsPerFrame(clean_labels, video_path + video_title + '_predictions_perframe.csv')
+    print perframe_labels_areStored
 
-perexp_labels_areStored = savePredictionsPerExpression(clean_labels, video_path + video_title + 'predictions_perexp.csv')
-print perexp_labels_areStored
+    perexp_labels_areStored = savePredictionsPerExpression(clean_labels, video_path + video_title + 'predictions_perexp.csv')
+    print perexp_labels_areStored
 
-playLabeledVideo(video_path+video_name, clean_labels)
+    playLabeledVideo(video_path+video_name, clean_labels)
+
+# CONFIDENCE LEVEL CALCULATION OF VIDEO SET for active learning
+def confidenceLevelsVideoSet():
+    # Get the list of names of the video files
+    videos_path = "data/test_videos/"
+    img_height = 30
+    img_width = 90
+    videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
+    #frames_list.sort()
+    confidence_videoset = []
+
+    '''for video in videosList:
+        if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
+            extractFaceImages(video, videos_path)'''
+    for video in videosList:
+        if os.path.isfile(os.path.join(videos_path, video)):
+            #extractFaceImages(video, videos_path)
+            face_images = loadFaceImages(video,videos_path)
+            labels, confidence = predictVideo(face_images,4,img_height,img_width) # Run the model
+            confidence_videoset.append([video]+confidence) # Store the mean and standard deviation of the per-frame confidence levels, representative of confidence of full video
+    
+    sorted(confidence_videoset, key=lambda x: x[1]) # Sort them per ascending mean value
+    # The video(s) with the lowest confidence level are considered relevant for the model
+    # (and hence will later be annotated and the model re-trained)
+
+    for video in confidence_videoset: # Print the confidence levels of all videos, in ascending order
+        print str(video[0])+" -- "+"mean cnf: "+str(video[1])+", stddev conf: "+str(video[2])
+    
+confidenceLevelsVideoSet()

@@ -46,8 +46,7 @@ def moveFramesNoOverwriting(file_name, orig_dir, dst_dir):
         dst_file = os.path.join(dst_dir, '%s-%d%s' % (head, count, tail))
     shutil.move(orig_dir+file_name,dst_file)
 
-
-def orderExtractedFrames(video_name,starting_frames,ending_frames,labels):
+def orderExtractedFrames(video_name,video_path,starting_frames,ending_frames,labels):
     '''
     Move the extracted face bounding box images to the corresponding class folders
     depending on the annotated facial expression class.
@@ -56,7 +55,7 @@ def orderExtractedFrames(video_name,starting_frames,ending_frames,labels):
     frames_folder = video_name+'_aligned'
     frame_counter = 0
     range_counter = 0
-    frames_path = "data/videos/"+frames_folder
+    frames_path = video_path+frames_folder+"/"
     # Get the list of names of the frames image files
     frames_list = os.listdir(frames_path)
     frames_list.sort()
@@ -71,9 +70,12 @@ def orderExtractedFrames(video_name,starting_frames,ending_frames,labels):
         if int(frame_counter) > int(ending_frames[range_counter]):
             # move to the next annotated range
             range_counter += 1
+        # Rename the frames to keep the video name
+        new_name = video_name+"-"+frame
+        os.rename(frames_path+frame, frames_path+new_name)
         # Move the frame to its corresponding data class subfolder depending on its label
         #shutil.move(frames_path +"/"+ frame, "data/classes/" + labels[range_counter] + "/" + frame)
-        moveFramesNoOverwriting(frame, frames_path +"/", "data/classes/"+labels[range_counter]+"/")
+        moveFramesNoOverwriting(new_name, frames_path, "data/classes/"+labels[range_counter]+"/")
         frame_counter += 1
 
 def preprocessExtractedFrames(frames_path, classes):
@@ -122,10 +124,10 @@ def dataAugmentHFlip(frames_path, classes):
 # VIDEO PROCESSOR
 
 # Get the list of names of the video files
-videos_path = "data/videos/"
+videos_path = "data/videos/non-annotated/"
 videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
 #print videosList
-classes = ['concerned','enthusiastic','happy','sad','serious']
+classes = ['positive','neutral','negative']
 
 for video in videosList:
     if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
@@ -136,7 +138,7 @@ for video in videosList:
         annot_name = 'data/videos/annotations/'+video_name+'_annot.csv'
         starting_frames, ending_frames, labels = readAnnotations(annot_name)
         # Move frames to corresponding class folders
-        orderExtractedFrames(video_name,starting_frames,ending_frames,labels)
+        orderExtractedFrames(video_name,videos_path,starting_frames,ending_frames,labels)
 
 #dataAugmentNoise('data/classes',classes) # NOT WORKING! TOO NOISY
 dataAugmentHFlip('data/classes',classes)

@@ -19,25 +19,31 @@ from tensorflow import set_random_seed
 set_random_seed(2)
 
 # Define data for k-fold cross-validation
-nfolds = 10
+#nfolds = 10
 total_true_labels = []
 total_predict_labels = []
+# Define data for subject-based validation
+nfolds = 7 # number of subjects (people)
 
-batch_size = 32
+batch_size = 64
 
 # Prepare input data
-classes = ['concerned','enthusiastic','happy','sad','serious']
+classes = ['positive','neutral','negative']
 num_classes = len(classes)
 
 # Define the percentage of the data that will automatically be used for validation
 validation_size = 0.1
 img_size = 90
-num_channels = 3
+num_channels = 1
 
 train_path='data/classes/'
 
 # Load training and validation images, dividing them in folds for cross-validation
-data = dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size, nfolds=nfolds)
+#data = dataset.read_train_sets(train_path, img_size, classes, validation_size=validation_size, nfolds=nfolds)
+# Load training and validation images, dividing them in subject-based folds for cross-validation
+# (each of the folds has all the data corresponding to the same subject -person-)
+data = dataset.read_train_sets_persubject(train_path, img_size, classes, validation_size=validation_size, nsubjects=nfolds)
+
 
 # Define parameters of neural network model
 own_filter_size_conv1 = 7 
@@ -126,7 +132,8 @@ for j in range(nfolds):
 
     session = tf.Session()
     # (Note that 'None' allows the loading of any number of images)
-    x = tf.placeholder(tf.float32, shape=[None, img_size,img_size,num_channels], name='x')
+    #x = tf.placeholder(tf.float32, shape=[None, img_size,img_size,num_channels], name='x') # normal version (non-cropped)
+    x = tf.placeholder(tf.float32, shape=[None, img_size/3,img_size,num_channels], name='x')
 
     ## Create variable for ground truth labels
     y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name='y_true')
@@ -213,9 +220,9 @@ for j in range(nfolds):
         
         for i in range(total_iterations,
                        total_iterations + num_iteration):
-            x_batch, y_true_batch, _, cls_batch = data.train.next_batch(batch_size)
-            x_valid_batch, y_valid_batch, _, valid_cls_batch = data.valid.next_batch(batch_size)
-            
+            x_batch, y_true_batch, _, cls_batch = data.train.next_batch(batch_size, j)
+            x_valid_batch, y_valid_batch, _, valid_cls_batch = data.valid.next_batch(batch_size, j)
+
             feed_dict_tr = {x: x_batch,
                                y_true: y_true_batch}
             feed_dict_val = {x: x_valid_batch,
@@ -223,9 +230,9 @@ for j in range(nfolds):
 
             session.run(optimizer, feed_dict=feed_dict_tr)
 
-            if i % int(data.train.num_examples/batch_size) == 0: 
+            if i % int(data.train.num_examples[j]/batch_size) == 0: 
                 val_loss = session.run(cost, feed_dict=feed_dict_val)
-                epoch = int(i / int(data.train.num_examples/batch_size))    
+                epoch = int(i / int(data.train.num_examples[j]/batch_size))    
                 
                 show_progress(epoch, feed_dict_tr, feed_dict_val, val_loss)
                 saver.save(session, './face-exp-model{}'.format(j)) 
@@ -234,7 +241,7 @@ for j in range(nfolds):
         total_iterations += num_iteration
     print "STARTING NEW TRAINING --- TEST FOLD: {} OUT OF {}".format(j+1,nfolds)
     
-    train(num_iteration=1100)
+    train(num_iteration=1000)
     print "Finished training for test fold",format(j)
 
     # Store the current test dataset (the fold not used during training)
@@ -247,7 +254,8 @@ for j in range(nfolds):
     test_labels.extend(data.valid.cls[j])
     
     # Test the trained CNN with the test data fold
-    predicted_labels = cnn_tester.testCNN(test_data, test_labels, j)
+    predicted_labels = cnn_tester.testCNN(test_data, test_labels, j, img_size, img_size) # normal version (non-cropped)
+    #predicted_labels = cnn_tester.testCNN(test_data, test_labels, j, img_size/3, img_size)
 
     total_true_labels.extend(test_labels)
     total_predict_labels.extend(predicted_labels)
