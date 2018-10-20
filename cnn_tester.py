@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix
 
 def testCNN(images, cls, nmodel, img_height, img_width):
     image_size=90
-    classes = ['positive','neutral','negative']
+    classes = ['enthusiastic','neutral','concerned']
     num_classes = len(classes)
     predict_cls = []
     num_channels=1

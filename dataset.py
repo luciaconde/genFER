@@ -12,7 +12,8 @@ def load_train(train_path, image_size, classes):
     img_names = []
     cls = []
     num_channels = 1
-    img_height = 30
+    #img_height = 30
+    img_height = 90
     img_width = 90
 
     print 'Reading training images'
@@ -24,11 +25,9 @@ def load_train(train_path, image_size, classes):
         path = os.path.join(train_path, fields, '*.bmp')
         files = sorted(glob.glob(path))
         #files.sort(key=lambda x: os.path.basename(x).split('.')[0])
-        print str(files)
         for fl in files:
-            image = cv2.imread(fl,0)
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            image = cv2.resize(image, (image_size, image_size),0,0, cv2.INTER_LINEAR)
+            image = cv2.imread(fl,cv2.IMREAD_GRAYSCALE)
+            image = cv2.resize(image, (img_height, img_width),0,0, cv2.INTER_LINEAR)
             image = image.astype(np.float32)
             image = np.multiply(image, 1.0 / 255.0)
             images.append(image)
@@ -38,8 +37,11 @@ def load_train(train_path, image_size, classes):
             flbase = os.path.basename(fl)
             img_names.append(flbase)
             cls.append(fields)
+
+    img_names,images,labels,cls = (list(t) for t in zip(*sorted(zip(img_names,images,labels,cls))))
     images = np.array(images)
     images = images.reshape(len(images), img_height,img_width,num_channels)
+    print 'Shape of images: '+str(images.shape)
     labels = np.array(labels)
     img_names = np.array(img_names)
     cls = np.array(cls)
@@ -52,7 +54,8 @@ def load_train_cropped(train_path, image_size, classes):
     img_names = []
     cls = []
     num_channels = 1
-    img_height = 30
+    #img_height = 30
+    img_height = 90
     img_width = 90
 
     print 'Reading training images'
@@ -62,7 +65,7 @@ def load_train_cropped(train_path, image_size, classes):
         # The dataset images are stored in subfolders named with the corresponding class label
         # therefore the subfolder name determines the class of each of the loaded images
         path = os.path.join(train_path, fields, '*.bmp')
-        files = sorted(glob.glob(path))
+        files = glob.glob(path)
         #files.sort(key=lambda x: os.path.basename(x).split('.')[0])
         for fl in files:
             image = cv2.imread(fl,cv2.IMREAD_GRAYSCALE)
@@ -180,6 +183,8 @@ class DataSet(object):
           else:
               print 'Size of current test fold: '+str(len(self._cls[i]))
 
+      # Shuffle (for subject-based cross-validation)
+      self._current_train_img, self._current_labels, self._current_img_names, self._current_cls = shuffle(self._current_train_img, self._current_labels, self._current_img_names, self._current_cls)
       print "Size of current dataset: {}".format(len(self._current_cls))
 
   def next_batch(self, batch_size, nfold):
@@ -191,6 +196,7 @@ class DataSet(object):
       self._epochs_done += 1
       start = 0
       self._index_in_epoch = batch_size
+      #print 'Batch size: '+str(batch_size)+', num_examples in fold '+str(nfold)+': '+str(self._num_examples[nfold])
       assert batch_size <= self._num_examples[nfold]
     end = self._index_in_epoch
 
@@ -202,8 +208,8 @@ def read_train_sets(train_path, image_size, classes, validation_size, nfolds):
     pass
   data_sets = DataSets()
 
-  #images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
-  images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes)
+  images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
+  #images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes)
   images, labels, img_names, cls = shuffle(images, labels, img_names, cls)  
 
   fold_size = int(len(cls)/nfolds)
@@ -261,8 +267,8 @@ def read_train_sets_persubject(train_path, image_size, classes, validation_size,
     pass
   data_sets = DataSets()
 
-  #images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
-  images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes) 
+  images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
+  #images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes) 
 
   validation_images = []
   validation_labels = []
@@ -277,15 +283,17 @@ def read_train_sets_persubject(train_path, image_size, classes, validation_size,
 
   # the train_ and validation_ data are now divided into (nfold) folds as a matrix
   # each row corresponding to a fold
-  subject = 'a'
+  #subject = 'a'
   init_index = 0
   end_index = 0
 
   for i in range(nsubjects):
-      subject = img_names[init_index][0]
+      #subject = img_names[init_index][0] # TT data
+      subject = img_names[init_index][0:4] # MMI data
       print "Saving fold no. {}".format(i)+" -- subject: "+subject
       for name in img_names[init_index:]:
-          if name[0] != subject or end_index>=(len(labels)-1): # If all the data from the current subject has been checked,
+          #if name[0] != subject or end_index>=(len(labels)-1): # If all the data from the current subject has been checked,
+          if str(name[0:4]) != subject or end_index>=(len(labels)-1):
               break # Store the index of the last one to store the fold and go to the next subject
           end_index += 1
 
@@ -294,6 +302,9 @@ def read_train_sets_persubject(train_path, image_size, classes, validation_size,
       current_labels = labels[init_index:end_index]
       current_img_names = img_names[init_index:end_index]
       current_cls = cls[init_index:end_index]
+
+      # Shuffle before dividing them into training and validation
+      current_images, current_labels, current_img_names, current_cls = shuffle(current_images, current_labels, current_img_names, current_cls) 
 
       validation_samples = int(validation_size*(end_index-init_index))
       
@@ -316,6 +327,10 @@ def read_train_sets_persubject(train_path, image_size, classes, validation_size,
       end_index += 1
       if init_index >= (len(labels)-1):
           break
+
+  print 'FOLD NUMBER '+str(i)+' -- included images:'
+  print 'TRAINING: '+str(train_img_names)
+  print 'VALIDATION: '+str(validation_img_names)
 
   data_sets.train = DataSet(train_images, train_labels, train_img_names, train_cls)
   data_sets.valid = DataSet(validation_images, validation_labels, validation_img_names, validation_cls)

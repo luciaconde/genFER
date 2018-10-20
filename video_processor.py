@@ -32,6 +32,26 @@ def readAnnotations(annotFile):
             segLabel.append(row[2])
     return np.array(segStart), np.array(segEnd), segLabel
 
+def readAnnotationsMMI(annot_file):
+    '''
+    Read a segmentation ground truth file, based on the format followed
+    on the common Excel annotation sheets.
+    ARGUMENTS:
+     - annotFile:       path of the CSV file
+    RETURNS:
+     - video_names:     a numpy array with all the names of the videos
+     - labels:       a numpy array of the corresponding labels for each of the videos
+    '''
+    f = open(annot_file, "rt")
+    reader = csv.reader(f, delimiter=',')
+    video_names = []
+    labels = []
+    for row in reader:
+        if len(row) == 2: # Verify that the row has no missing data
+            video_names.append(row[0])
+            labels.append(row[1])
+    return video_names, labels
+
 def moveFramesNoOverwriting(file_name, orig_dir, dst_dir):
     '''
     Move a frame to its corresponding class subfolder making sure it doesn't overwrite
@@ -46,7 +66,64 @@ def moveFramesNoOverwriting(file_name, orig_dir, dst_dir):
         dst_file = os.path.join(dst_dir, '%s-%d%s' % (head, count, tail))
     shutil.move(orig_dir+file_name,dst_file)
 
-def orderExtractedFrames(video_name,video_path,starting_frames,ending_frames,labels):
+def orderExtractedFramesMMI(video_name,video_path,label,step):
+    '''
+    Move specific extracted face bounding box images (beginning and end: neutral, middle: label)
+    to the corresponding class folders depending on the annotated facial expression class.
+    '''
+    frames_path = video_path+video_name+'_aligned/'
+    frames_list = os.listdir(frames_path)
+    frames_list.sort()
+    mid_frame = int(len(frames_list)/2)-step
+
+    try:
+        for frame in range(0,step): # Store the neutral frames
+            # Rename frames files
+            new_name_init = video_name+"-"+frames_list[frame]
+            os.rename(frames_path+frames_list[frame], frames_path+new_name_init)
+            moveFramesNoOverwriting(new_name_init, frames_path, "data/classes/neutral/")
+
+            new_name_end = video_name+"-"+frames_list[len(frames_list)-1-frame]
+            os.rename(frames_path+frames_list[len(frames_list)-1-frame], frames_path+new_name_end)
+            moveFramesNoOverwriting(new_name_end, frames_path, "data/classes/neutral/")
+
+        for frame in range(0,2*step):
+            new_name = video_name+"-"+frames_list[mid_frame+frame]
+            try:
+                os.rename(frames_path+frames_list[mid_frame+frame], frames_path+new_name)
+            except OSError:
+                print 'Frame not found (possibly tagged as neutral)'
+            moveFramesNoOverwriting(new_name, frames_path, "data/classes/"+label+"/")
+    except IOError:
+        print 'Frame file could not be found!'   
+
+def orderExtractedFramesStep(video_name,video_path,starting_frames,ending_frames,labels,step):
+    '''
+    Move specific extracted face bounding box images (by step) to the corresponding class folders
+    depending on the annotated facial expression class.
+    '''
+    # Access the folder containing the extracted face bounding box images
+    frames_folder = video_name+'_aligned'
+    range_counter = 0
+    frames_path = video_path+frames_folder+"/"
+    # Get the list of names of the frames image files
+    frames_list = os.listdir(frames_path)
+    frames_list.sort()
+
+    for frame in range(0,len(frames_list),step):
+        # If the frame is not within the current range of annotated frame labels:
+        if frame > int(ending_frames[range_counter]):
+            # move to the next annotated range
+            range_counter += 1
+        # Rename the frames to keep the video name
+        new_name = video_name+"-"+frames_list[frame]
+        os.rename(frames_path+frames_list[frame], frames_path+new_name)
+        # Move the frame to its corresponding data class subfolder depending on its label
+        #shutil.move(frames_path +"/"+ frame, "data/classes/" + labels[range_counter] + "/" + frame)
+        moveFramesNoOverwriting(new_name, frames_path, "data/classes/"+labels[range_counter]+"/")
+
+
+def orderExtractedFramesAll(video_name,video_path,starting_frames,ending_frames,labels):
     '''
     Move the extracted face bounding box images to the corresponding class folders
     depending on the annotated facial expression class.
@@ -122,24 +199,56 @@ def dataAugmentHFlip(frames_path, classes):
             cv2.imwrite(frame+'_flipped.bmp', image)
 
 # VIDEO PROCESSOR
+def videoProcessor():
+    # Get the list of names of the video files
+    videos_path = "data/videos/init_data/"
+    videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
+    #print videosList
+    classes = ['enthusiastic','neutral','concerned']
+    frames_step = 7
 
-# Get the list of names of the video files
-videos_path = "data/videos/non-annotated/"
-videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
-#print videosList
-classes = ['positive','neutral','negative']
+    for video in videosList:
+        if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
+            # Process the video through OpenFace
+            os.system('./faceDetectorExtraction.sh '+video+' '+videos_path)
+            # Read annotations
+            video_name = os.path.splitext(video)[0]
+            annot_name = 'data/videos/annotations/'+video_name+'_annot.csv'
+            starting_frames, ending_frames, labels = readAnnotations(annot_name)
+            # Move frames to corresponding class folders
+            #orderExtractedFramesAll(video_name,videos_path,starting_frames,ending_frames,labels)
+            orderExtractedFramesStep(video_name,videos_path,starting_frames,ending_frames,labels,frames_step)
 
-for video in videosList:
-    if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
-        # Process the video through OpenFace
-        os.system('./faceDetectorExtraction.sh '+video+' '+videos_path)
-        # Read annotations
-        video_name = os.path.splitext(video)[0]
-        annot_name = 'data/videos/annotations/'+video_name+'_annot.csv'
-        starting_frames, ending_frames, labels = readAnnotations(annot_name)
-        # Move frames to corresponding class folders
-        orderExtractedFrames(video_name,videos_path,starting_frames,ending_frames,labels)
+    #dataAugmentNoise('data/classes',classes) # NOT WORKING! TOO NOISY
+    dataAugmentHFlip('data/classes',classes)
+    preprocessExtractedFrames('data/classes',classes)
 
-#dataAugmentNoise('data/classes',classes) # NOT WORKING! TOO NOISY
-dataAugmentHFlip('data/classes',classes)
-preprocessExtractedFrames('data/classes',classes)
+def getVideoLabel(video, video_names, labels):
+    try:
+        pos = video_names.index(video)
+    except ValueError:
+        pass
+    return labels[pos]
+
+def videoProcessorMMI():
+    # Get the list of names of the video files
+    videos_path = "data/videos/mmi_adjusted/"
+    videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
+    #print videosList
+    classes = ['enthusiastic','neutral','concerned']
+    video_names, labels = readAnnotationsMMI('data/mmi_annot.csv')
+    frames_step = 8
+
+    for video in videosList:
+        if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
+            # Process the video through OpenFace
+            os.system('./faceDetectorExtraction.sh '+video+' '+videos_path)
+            video_name = os.path.splitext(video)[0]
+            label = getVideoLabel(video,video_names,labels)
+            # Move frames to corresponding class folders
+            orderExtractedFramesMMI(video_name,videos_path,label,frames_step)
+    #dataAugmentNoise('data/classes',classes) # NOT WORKING! TOO NOISY
+    dataAugmentHFlip('data/classes',classes)
+    preprocessExtractedFrames('data/classes',classes)
+
+videoProcessorMMI()

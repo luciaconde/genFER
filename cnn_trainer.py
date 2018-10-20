@@ -23,12 +23,12 @@ set_random_seed(2)
 total_true_labels = []
 total_predict_labels = []
 # Define data for subject-based validation
-nfolds = 7 # number of subjects (people)
+nfolds = 21 # number of subjects (people) # TT: 7
 
-batch_size = 64
+batch_size = 32
 
 # Prepare input data
-classes = ['positive','neutral','negative']
+classes = ['enthusiastic','neutral','concerned']
 num_classes = len(classes)
 
 # Define the percentage of the data that will automatically be used for validation
@@ -132,8 +132,8 @@ for j in range(nfolds):
 
     session = tf.Session()
     # (Note that 'None' allows the loading of any number of images)
-    #x = tf.placeholder(tf.float32, shape=[None, img_size,img_size,num_channels], name='x') # normal version (non-cropped)
-    x = tf.placeholder(tf.float32, shape=[None, img_size/3,img_size,num_channels], name='x')
+    x = tf.placeholder(tf.float32, shape=[None, img_size,img_size,num_channels], name='x') # normal version (non-cropped)
+    #x = tf.placeholder(tf.float32, shape=[None, img_size/3,img_size,num_channels], name='x')
 
     ## Create variable for ground truth labels
     y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name='y_true')
@@ -203,8 +203,15 @@ for j in range(nfolds):
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     session.run(tf.global_variables_initializer())
     
+    print 'Current training data:'
     data.train.setCurrentDataset(nfolds, j)
+    print 'Current validation data:'
     data.valid.setCurrentDataset(nfolds, j)
+
+    '''print 'Current labels in training folds:'
+    print data.train.cls
+    print 'Current labels in validation folds:'
+    print data.valid.cls'''
 
     def show_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
         acc = session.run(accuracy, feed_dict=feed_dict_train)
@@ -241,7 +248,7 @@ for j in range(nfolds):
         total_iterations += num_iteration
     print "STARTING NEW TRAINING --- TEST FOLD: {} OUT OF {}".format(j+1,nfolds)
     
-    train(num_iteration=1000)
+    train(num_iteration=1800)
     print "Finished training for test fold",format(j)
 
     # Store the current test dataset (the fold not used during training)
