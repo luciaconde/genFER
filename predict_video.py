@@ -206,12 +206,13 @@ def videoPredictor(video_name):
     video_path = 'data/test_videos_TEST/'
     img_height = 90
     img_width = 90
+    nmodel = 16
 
     extractFaceImages(video_name, video_path)
 
     face_images = loadFaceImages(video_name,video_path)
 
-    labels, confidence = predictVideo(face_images,4,img_height,img_width) # Predict the facial expression label for each of the face images (that is, for each video frame)
+    labels, confidence = predictVideo(face_images,nmodel,img_height,img_width) # Predict the facial expression label for each of the face images (that is, for each video frame)
 #print 'Predicted labels: '+str(labels)
     clean_labels = cleanLabels(labels)
 #print 'Cleaned labels: '+str(clean_labels)
@@ -257,6 +258,7 @@ def confidenceLevelsVideoSet():
 #videoPredictor('user_response_3500327.mp4')
 #videoPredictor('user_response_3549556.mp4')
 #videoPredictor('i_user_response_3524837.mp4')
+videoPredictor('test_lucia1.mp4')
 
 
 #confidenceLevelsVideoSet()

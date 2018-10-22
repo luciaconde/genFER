@@ -1,0 +1,776 @@
+Current training data:
+Size of current test fold: 461
+Size of current dataset: 4629
+Current validation data:
+Size of current test fold: 51
+Size of current dataset: 502
+STARTING NEW TRAINING --- TEST FOLD: 1 OUT OF 21
+Training Epoch 1 --- Training accuracy:  18.8%, validation accuracy:  25.0%, validation loss: 1.104
+Training Epoch 2 --- Training accuracy:  40.6%, validation accuracy:  50.0%, validation loss: 1.049
+Training Epoch 3 --- Training accuracy:  40.6%, validation accuracy:  46.9%, validation loss: 1.070
+Training Epoch 4 --- Training accuracy:  43.8%, validation accuracy:  65.6%, validation loss: 0.874
+Training Epoch 5 --- Training accuracy:  53.1%, validation accuracy:  75.0%, validation loss: 0.665
+Training Epoch 6 --- Training accuracy:  50.0%, validation accuracy:  71.9%, validation loss: 0.658
+Training Epoch 7 --- Training accuracy:  56.2%, validation accuracy:  71.9%, validation loss: 0.627
+Training Epoch 8 --- Training accuracy:  62.5%, validation accuracy:  71.9%, validation loss: 0.589
+Training Epoch 9 --- Training accuracy:  75.0%, validation accuracy:  75.0%, validation loss: 0.536
+Training Epoch 10 --- Training accuracy:  75.0%, validation accuracy:  87.5%, validation loss: 0.283
+Training Epoch 11 --- Training accuracy:  81.2%, validation accuracy:  87.5%, validation loss: 0.384
+Training Epoch 12 --- Training accuracy:  75.0%, validation accuracy:  81.2%, validation loss: 0.232
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy:  90.6%, validation loss: 0.214
+Training Epoch 14 --- Training accuracy:  90.6%, validation accuracy:  93.8%, validation loss: 0.253
+Training Epoch 15 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.052
+Finished training for test fold 0
+2018-10-21 11:37:55.360448: W tensorflow/core/framework/allocator.cc:108] Allocation of 530841600 exceeds 10% of system memory.
+2018-10-21 11:37:57.713014: W tensorflow/core/framework/allocator.cc:108] Allocation of 132710400 exceeds 10% of system memory.
+Accuracy: 82.6171875%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[128   0   0]
+ [ 42  71  15]
+ [ 32   0 224]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.63      1.00      0.78       128
+     neutral       1.00      0.55      0.71       128
+   concerned       0.94      0.88      0.91       256
+
+ avg / total       0.88      0.83      0.82       512
+
+Current training data:
+Size of current test fold: 403
+Size of current dataset: 4687
+Current validation data:
+Size of current test fold: 44
+Size of current dataset: 509
+STARTING NEW TRAINING --- TEST FOLD: 2 OUT OF 21
+Training Epoch 1 --- Training accuracy:  40.6%, validation accuracy:  62.5%, validation loss: 1.043
+Training Epoch 2 --- Training accuracy:  46.9%, validation accuracy:  56.2%, validation loss: 0.978
+Training Epoch 3 --- Training accuracy:  46.9%, validation accuracy:  46.9%, validation loss: 1.035
+Training Epoch 4 --- Training accuracy:  53.1%, validation accuracy:  50.0%, validation loss: 1.024
+Training Epoch 5 --- Training accuracy:  62.5%, validation accuracy:  62.5%, validation loss: 0.855
+Training Epoch 6 --- Training accuracy:  78.1%, validation accuracy:  90.6%, validation loss: 0.559
+Training Epoch 7 --- Training accuracy:  81.2%, validation accuracy:  90.6%, validation loss: 0.300
+Training Epoch 8 --- Training accuracy:  84.4%, validation accuracy:  75.0%, validation loss: 0.639
+Training Epoch 9 --- Training accuracy:  93.8%, validation accuracy:  84.4%, validation loss: 0.292
+Training Epoch 10 --- Training accuracy:  93.8%, validation accuracy: 100.0%, validation loss: 0.310
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy: 100.0%, validation loss: 0.096
+Training Epoch 12 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.076
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.167
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.096
+Training Epoch 15 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.055
+Finished training for test fold 1
+2018-10-21 11:54:18.111748: W tensorflow/core/framework/allocator.cc:108] Allocation of 463449600 exceeds 10% of system memory.
+2018-10-21 11:54:19.978549: W tensorflow/core/framework/allocator.cc:108] Allocation of 115862400 exceeds 10% of system memory.
+Accuracy: 30.87248322147651%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 10  86   0]
+ [  1 127   0]
+ [ 39 183   1]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.20      0.10      0.14        96
+     neutral       0.32      0.99      0.48       128
+   concerned       1.00      0.00      0.01       223
+
+ avg / total       0.63      0.31      0.17       447
+
+Current training data:
+Size of current test fold: 172
+Size of current dataset: 4918
+Current validation data:
+Size of current test fold: 19
+Size of current dataset: 534
+STARTING NEW TRAINING --- TEST FOLD: 3 OUT OF 21
+Training Epoch 1 --- Training accuracy:  50.0%, validation accuracy:  40.6%, validation loss: 1.080
+Training Epoch 2 --- Training accuracy:  53.1%, validation accuracy:  40.6%, validation loss: 1.085
+Training Epoch 3 --- Training accuracy:  53.1%, validation accuracy:  62.5%, validation loss: 0.964
+Training Epoch 4 --- Training accuracy:  65.6%, validation accuracy:  68.8%, validation loss: 0.818
+Training Epoch 5 --- Training accuracy:  71.9%, validation accuracy:  84.4%, validation loss: 0.546
+Training Epoch 6 --- Training accuracy:  84.4%, validation accuracy:  75.0%, validation loss: 0.659
+Training Epoch 7 --- Training accuracy:  87.5%, validation accuracy:  75.0%, validation loss: 0.586
+Training Epoch 8 --- Training accuracy:  87.5%, validation accuracy:  90.6%, validation loss: 0.255
+Training Epoch 9 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.228
+Training Epoch 10 --- Training accuracy:  96.9%, validation accuracy:  87.5%, validation loss: 0.310
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  87.5%, validation loss: 0.181
+Training Epoch 12 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.108
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.093
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.078
+Finished training for test fold 2
+2018-10-21 12:10:41.478532: W tensorflow/core/framework/allocator.cc:108] Allocation of 198028800 exceeds 10% of system memory.
+Accuracy: 48.167539267015705%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 4  8 20]
+ [ 0 53 11]
+ [ 0 60 35]]
+              precision    recall  f1-score   support
+
+enthusiastic       1.00      0.12      0.22        32
+     neutral       0.44      0.83      0.57        64
+   concerned       0.53      0.37      0.43        95
+
+ avg / total       0.58      0.48      0.45       191
+
+Current training data:
+Size of current test fold: 115
+Size of current dataset: 4975
+Current validation data:
+Size of current test fold: 12
+Size of current dataset: 541
+STARTING NEW TRAINING --- TEST FOLD: 4 OUT OF 21
+Training Epoch 1 --- Training accuracy:  40.6%, validation accuracy:  31.2%, validation loss: 1.088
+Training Epoch 2 --- Training accuracy:  53.1%, validation accuracy:  59.4%, validation loss: 0.996
+Training Epoch 3 --- Training accuracy:  53.1%, validation accuracy:  53.1%, validation loss: 1.028
+Training Epoch 4 --- Training accuracy:  53.1%, validation accuracy:  56.2%, validation loss: 1.005
+Training Epoch 5 --- Training accuracy:  53.1%, validation accuracy:  78.1%, validation loss: 0.719
+Training Epoch 6 --- Training accuracy:  62.5%, validation accuracy:  78.1%, validation loss: 0.520
+Training Epoch 7 --- Training accuracy:  75.0%, validation accuracy:  81.2%, validation loss: 0.495
+Training Epoch 8 --- Training accuracy:  75.0%, validation accuracy:  84.4%, validation loss: 0.324
+Training Epoch 9 --- Training accuracy:  84.4%, validation accuracy:  93.8%, validation loss: 0.322
+Training Epoch 10 --- Training accuracy:  93.8%, validation accuracy:  96.9%, validation loss: 0.146
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  90.6%, validation loss: 0.328
+Training Epoch 12 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.239
+Training Epoch 13 --- Training accuracy:  93.8%, validation accuracy:  84.4%, validation loss: 0.342
+Training Epoch 14 --- Training accuracy:  93.8%, validation accuracy: 100.0%, validation loss: 0.020
+Finished training for test fold 3
+Accuracy: 43.30708661417323%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 0  8 28]
+ [ 0 32  0]
+ [ 0 36 23]]
+/home/lucia/Documents/GMT-SP/FacialExpressionsClassifier/facialexp/local/lib/python2.7/site-packages/sklearn/metrics/classification.py:1135: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples.
+  'precision', 'predicted', average, warn_for)
+              precision    recall  f1-score   support
+
+enthusiastic       0.00      0.00      0.00        36
+     neutral       0.42      1.00      0.59        32
+   concerned       0.45      0.39      0.42        59
+
+ avg / total       0.32      0.43      0.34       127
+
+Current training data:
+Size of current test fold: 57
+Size of current dataset: 5033
+Current validation data:
+Size of current test fold: 6
+Size of current dataset: 547
+STARTING NEW TRAINING --- TEST FOLD: 5 OUT OF 21
+Training Epoch 1 --- Training accuracy:  53.1%, validation accuracy:  28.1%, validation loss: 1.116
+Training Epoch 2 --- Training accuracy:  50.0%, validation accuracy:  62.5%, validation loss: 0.975
+Training Epoch 3 --- Training accuracy:  65.6%, validation accuracy:  59.4%, validation loss: 0.969
+Training Epoch 4 --- Training accuracy:  75.0%, validation accuracy:  56.2%, validation loss: 0.801
+Training Epoch 5 --- Training accuracy:  75.0%, validation accuracy:  71.9%, validation loss: 0.611
+Training Epoch 6 --- Training accuracy:  84.4%, validation accuracy:  84.4%, validation loss: 0.435
+Training Epoch 7 --- Training accuracy:  81.2%, validation accuracy:  84.4%, validation loss: 0.569
+Training Epoch 8 --- Training accuracy:  84.4%, validation accuracy:  87.5%, validation loss: 0.387
+Training Epoch 9 --- Training accuracy:  87.5%, validation accuracy:  87.5%, validation loss: 0.309
+Training Epoch 10 --- Training accuracy:  84.4%, validation accuracy:  96.9%, validation loss: 0.163
+Training Epoch 11 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.103
+Training Epoch 12 --- Training accuracy:  93.8%, validation accuracy:  96.9%, validation loss: 0.101
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.073
+Training Epoch 14 --- Training accuracy:  93.8%, validation accuracy:  96.9%, validation loss: 0.134
+Finished training for test fold 4
+Accuracy: 85.71428571428571%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[32  0]
+ [ 9 22]]
+/home/lucia/Documents/GMT-SP/FacialExpressionsClassifier/facialexp/local/lib/python2.7/site-packages/sklearn/metrics/classification.py:1428: UserWarning: labels size, 2, does not match size of target_names, 3
+  .format(len(labels), len(target_names))
+              precision    recall  f1-score   support
+
+enthusiastic       0.78      1.00      0.88        32
+     neutral       1.00      0.71      0.83        31
+
+ avg / total       0.89      0.86      0.85        63
+
+Current training data:
+Size of current test fold: 288
+Size of current dataset: 4802
+Current validation data:
+Size of current test fold: 31
+Size of current dataset: 522
+STARTING NEW TRAINING --- TEST FOLD: 6 OUT OF 21
+Training Epoch 1 --- Training accuracy:  43.8%, validation accuracy:  53.1%, validation loss: 1.088
+Training Epoch 2 --- Training accuracy:  40.6%, validation accuracy:  53.1%, validation loss: 0.999
+Training Epoch 3 --- Training accuracy:  40.6%, validation accuracy:  56.2%, validation loss: 1.030
+Training Epoch 4 --- Training accuracy:  40.6%, validation accuracy:  62.5%, validation loss: 0.886
+Training Epoch 5 --- Training accuracy:  43.8%, validation accuracy:  62.5%, validation loss: 0.875
+Training Epoch 6 --- Training accuracy:  56.2%, validation accuracy:  53.1%, validation loss: 0.697
+Training Epoch 7 --- Training accuracy:  65.6%, validation accuracy:  90.6%, validation loss: 0.417
+Training Epoch 8 --- Training accuracy:  87.5%, validation accuracy:  87.5%, validation loss: 0.356
+Training Epoch 9 --- Training accuracy:  90.6%, validation accuracy:  90.6%, validation loss: 0.291
+ lTraining Epoch 10 --- Training accuracy:  90.6%, validation accuracy:  90.6%, validation loss: 0.289
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  93.8%, validation loss: 0.197
+Training Epoch 12 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.183
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.099
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.059
+Finished training for test fold 5
+Accuracy: 57.68025078369906%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 90   6   0]
+ [  0  64   0]
+ [129   0  30]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.41      0.94      0.57        96
+     neutral       0.91      1.00      0.96        64
+   concerned       1.00      0.19      0.32       159
+
+ avg / total       0.81      0.58      0.52       319
+
+Current training data:
+Size of current test fold: 230
+Size of current dataset: 4860
+Current validation data:
+Size of current test fold: 25
+Size of current dataset: 528
+STARTING NEW TRAINING --- TEST FOLD: 7 OUT OF 21
+Training Epoch 1 --- Training accuracy:  34.4%, validation accuracy:  21.9%, validation loss: 1.100
+Training Epoch 2 --- Training accuracy:  50.0%, validation accuracy:  50.0%, validation loss: 1.042
+Training Epoch 3 --- Training accuracy:  50.0%, validation accuracy:  59.4%, validation loss: 1.000
+Training Epoch 4 --- Training accuracy:  50.0%, validation accuracy:  68.8%, validation loss: 0.892
+Training Epoch 5 --- Training accuracy:  59.4%, validation accuracy:  50.0%, validation loss: 1.063
+Training Epoch 6 --- Training accuracy:  59.4%, validation accuracy:  84.4%, validation loss: 0.563
+Training Epoch 7 --- Training accuracy:  68.8%, validation accuracy:  78.1%, validation loss: 0.496
+Training Epoch 8 --- Training accuracy:  81.2%, validation accuracy:  81.2%, validation loss: 0.573
+Training Epoch 9 --- Training accuracy:  90.6%, validation accuracy:  93.8%, validation loss: 0.264
+Training Epoch 10 --- Training accuracy:  93.8%, validation accuracy:  90.6%, validation loss: 0.176
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  93.8%, validation loss: 0.139
+Training Epoch 12 --- Training accuracy:  90.6%, validation accuracy:  90.6%, validation loss: 0.337
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.056
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.064
+Finished training for test fold 6
+Accuracy: 71.76470588235294%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 0  0 32]
+ [ 0 92  4]
+ [29  7 91]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.00      0.00      0.00        32
+     neutral       0.93      0.96      0.94        96
+   concerned       0.72      0.72      0.72       127
+
+ avg / total       0.71      0.72      0.71       255
+
+Current training data:
+Size of current test fold: 230
+Size of current dataset: 4860
+Current validation data:
+Size of current test fold: 25
+Size of current dataset: 528
+STARTING NEW TRAINING --- TEST FOLD: 8 OUT OF 21
+Training Epoch 1 --- Training accuracy:  40.6%, validation accuracy:  46.9%, validation loss: 1.079
+Training Epoch 2 --- Training accuracy:  43.8%, validation accuracy:  59.4%, validation loss: 0.951
+Training Epoch 3 --- Training accuracy:  43.8%, validation accuracy:  56.2%, validation loss: 0.954
+Training Epoch 4 --- Training accuracy:  53.1%, validation accuracy:  68.8%, validation loss: 0.878
+Training Epoch 5 --- Training accuracy:  62.5%, validation accuracy:  62.5%, validation loss: 0.777
+Training Epoch 6 --- Training accuracy:  62.5%, validation accuracy:  68.8%, validation loss: 0.614
+Training Epoch 7 --- Training accuracy:  78.1%, validation accuracy:  81.2%, validation loss: 0.506
+Training Epoch 8 --- Training accuracy:  71.9%, validation accuracy:  81.2%, validation loss: 0.490
+Training Epoch 9 --- Training accuracy:  78.1%, validation accuracy:  96.9%, validation loss: 0.286
+Training Epoch 10 --- Training accuracy:  87.5%, validation accuracy:  90.6%, validation loss: 0.270
+Training Epoch 11 --- Training accuracy:  87.5%, validation accuracy:  93.8%, validation loss: 0.212
+Training Epoch 12 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.111
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.083
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.062
+Finished training for test fold 7
+Accuracy: 63.13725490196078%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[18  2 44]
+ [ 0 47 17]
+ [24  7 96]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.43      0.28      0.34        64
+     neutral       0.84      0.73      0.78        64
+   concerned       0.61      0.76      0.68       127
+
+ avg / total       0.62      0.63      0.62       255
+
+Current training data:
+Size of current test fold: 172
+Size of current dataset: 4918
+Current validation data:
+Size of current test fold: 19
+Size of current dataset: 534
+STARTING NEW TRAINING --- TEST FOLD: 9 OUT OF 21
+Training Epoch 1 --- Training accuracy:  53.1%, validation accuracy:  46.9%, validation loss: 1.065
+Training Epoch 2 --- Training accuracy:  53.1%, validation accuracy:  46.9%, validation loss: 1.037
+Training Epoch 3 --- Training accuracy:  53.1%, validation accuracy:  62.5%, validation loss: 0.933
+Training Epoch 4 --- Training accuracy:  65.6%, validation accuracy:  59.4%, validation loss: 0.979
+Training Epoch 5 --- Training accuracy:  68.8%, validation accuracy:  59.4%, validation loss: 0.809
+Training Epoch 6 --- Training accuracy:  81.2%, validation accuracy:  87.5%, validation loss: 0.463
+Training Epoch 7 --- Training accuracy:  75.0%, validation accuracy:  59.4%, validation loss: 0.605
+Training Epoch 8 --- Training accuracy:  81.2%, validation accuracy:  87.5%, validation loss: 0.336
+Training Epoch 9 --- Training accuracy:  81.2%, validation accuracy:  90.6%, validation loss: 0.179
+Training Epoch 10 --- Training accuracy:  96.9%, validation accuracy:  90.6%, validation loss: 0.224
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy: 100.0%, validation loss: 0.030
+Training Epoch 12 --- Training accuracy:  93.8%, validation accuracy:  96.9%, validation loss: 0.133
+Training Epoch 13 --- Training accuracy: 100.0%, validation accuracy:  93.8%, validation loss: 0.149
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.070
+Finished training for test fold 8
+Accuracy: 58.63874345549738%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[32 64]
+ [15 80]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.68      0.33      0.45        96
+     neutral       0.56      0.84      0.67        95
+
+ avg / total       0.62      0.59      0.56       191
+
+Current training data:
+Size of current test fold: 288
+Size of current dataset: 4802
+Current validation data:
+Size of current test fold: 31
+Size of current dataset: 522
+STARTING NEW TRAINING --- TEST FOLD: 10 OUT OF 21
+Training Epoch 1 --- Training accuracy:  59.4%, validation accuracy:  46.9%, validation loss: 1.088
+Training Epoch 2 --- Training accuracy:  65.6%, validation accuracy:  53.1%, validation loss: 1.053
+Training Epoch 3 --- Training accuracy:  65.6%, validation accuracy:  56.2%, validation loss: 1.005
+Training Epoch 4 --- Training accuracy:  65.6%, validation accuracy:  50.0%, validation loss: 0.962
+Training Epoch 5 --- Training accuracy:  75.0%, validation accuracy:  62.5%, validation loss: 0.848
+Training Epoch 6 --- Training accuracy:  71.9%, validation accuracy:  59.4%, validation loss: 0.808
+Training Epoch 7 --- Training accuracy:  75.0%, validation accuracy:  71.9%, validation loss: 0.538
+Training Epoch 8 --- Training accuracy:  84.4%, validation accuracy:  78.1%, validation loss: 0.466
+Training Epoch 9 --- Training accuracy:  84.4%, validation accuracy:  84.4%, validation loss: 0.298
+Training Epoch 10 --- Training accuracy:  84.4%, validation accuracy:  90.6%, validation loss: 0.292
+Training Epoch 11 --- Training accuracy:  90.6%, validation accuracy:  87.5%, validation loss: 0.214
+Training Epoch 12 --- Training accuracy:  84.4%, validation accuracy: 100.0%, validation loss: 0.065
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.107
+Training Epoch 14 --- Training accuracy:  90.6%, validation accuracy:  93.8%, validation loss: 0.063
+Finished training for test fold 9
+Accuracy: 78.36990595611285%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 32   0   0]
+ [ 32  65  31]
+ [  2   4 153]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.48      1.00      0.65        32
+     neutral       0.94      0.51      0.66       128
+   concerned       0.83      0.96      0.89       159
+
+ avg / total       0.84      0.78      0.77       319
+
+Current training data:
+Size of current test fold: 288
+Size of current dataset: 4802
+Current validation data:
+Size of current test fold: 31
+Size of current dataset: 522
+STARTING NEW TRAINING --- TEST FOLD: 11 OUT OF 21
+Training Epoch 1 --- Training accuracy:  37.5%, validation accuracy:  28.1%, validation loss: 1.102
+Training Epoch 2 --- Training accuracy:  50.0%, validation accuracy:  43.8%, validation loss: 1.032
+Training Epoch 3 --- Training accuracy:  50.0%, validation accuracy:  56.2%, validation loss: 1.017
+Training Epoch 4 --- Training accuracy:  68.8%, validation accuracy:  53.1%, validation loss: 0.968
+Training Epoch 5 --- Training accuracy:  78.1%, validation accuracy:  71.9%, validation loss: 0.793
+Training Epoch 6 --- Training accuracy:  75.0%, validation accuracy:  59.4%, validation loss: 0.802
+Training Epoch 7 --- Training accuracy:  90.6%, validation accuracy:  75.0%, validation loss: 0.599
+Training Epoch 8 --- Training accuracy:  87.5%, validation accuracy:  87.5%, validation loss: 0.423
+Training Epoch 9 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.268
+Training Epoch 10 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.200
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  93.8%, validation loss: 0.156
+Training Epoch 12 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.125
+Training Epoch 13 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.051
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.108
+Finished training for test fold 10
+Accuracy: 59.87460815047022%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[  0   0  64]
+ [  0  32  64]
+ [  0   0 159]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.00      0.00      0.00        64
+     neutral       1.00      0.33      0.50        96
+   concerned       0.55      1.00      0.71       159
+
+ avg / total       0.58      0.60      0.51       319
+
+Current training data:
+Size of current test fold: 230
+Size of current dataset: 4860
+Current validation data:
+Size of current test fold: 25
+Size of current dataset: 528
+STARTING NEW TRAINING --- TEST FOLD: 12 OUT OF 21
+Training Epoch 1 --- Training accuracy:  50.0%, validation accuracy:  37.5%, validation loss: 1.099
+Training Epoch 2 --- Training accuracy:  34.4%, validation accuracy:  56.2%, validation loss: 0.980
+Training Epoch 3 --- Training accuracy:  37.5%, validation accuracy:  53.1%, validation loss: 0.961
+Training Epoch 4 --- Training accuracy:  34.4%, validation accuracy:  75.0%, validation loss: 0.720
+Training Epoch 5 --- Training accuracy:  40.6%, validation accuracy:  59.4%, validation loss: 0.773
+Training Epoch 6 --- Training accuracy:  50.0%, validation accuracy:  75.0%, validation loss: 0.665
+Training Epoch 7 --- Training accuracy:  68.8%, validation accuracy:  75.0%, validation loss: 0.579
+Training Epoch 8 --- Training accuracy:  84.4%, validation accuracy:  87.5%, validation loss: 0.346
+Training Epoch 9 --- Training accuracy:  81.2%, validation accuracy:  96.9%, validation loss: 0.293
+Training Epoch 10 --- Training accuracy:  81.2%, validation accuracy:  90.6%, validation loss: 0.208
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  90.6%, validation loss: 0.152
+Training Epoch 12 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.080
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.088
+Training Epoch 14 --- Training accuracy:  90.6%, validation accuracy:  87.5%, validation loss: 0.291
+Finished training for test fold 11
+Accuracy: 70.58823529411765%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[75 21  0]
+ [ 0 18 14]
+ [25 15 87]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.75      0.78      0.77        96
+     neutral       0.33      0.56      0.42        32
+   concerned       0.86      0.69      0.76       127
+
+ avg / total       0.75      0.71      0.72       255
+
+Current training data:
+Size of current test fold: 115
+Size of current dataset: 4975
+Current validation data:
+Size of current test fold: 12
+Size of current dataset: 541
+STARTING NEW TRAINING --- TEST FOLD: 13 OUT OF 21
+Training Epoch 1 --- Training accuracy:  37.5%, validation accuracy:  28.1%, validation loss: 1.125
+Training Epoch 2 --- Training accuracy:  53.1%, validation accuracy:  65.6%, validation loss: 0.955
+Training Epoch 3 --- Training accuracy:  53.1%, validation accuracy:  53.1%, validation loss: 1.018
+Training Epoch 4 --- Training accuracy:  53.1%, validation accuracy:  50.0%, validation loss: 1.038
+Training Epoch 5 --- Training accuracy:  59.4%, validation accuracy:  59.4%, validation loss: 0.993
+Training Epoch 6 --- Training accuracy:  75.0%, validation accuracy:  68.8%, validation loss: 0.891
+Training Epoch 7 --- Training accuracy:  84.4%, validation accuracy:  75.0%, validation loss: 0.617
+Training Epoch 8 --- Training accuracy:  93.8%, validation accuracy:  84.4%, validation loss: 0.394
+Training Epoch 9 --- Training accuracy:  96.9%, validation accuracy:  90.6%, validation loss: 0.338
+Training Epoch 10 --- Training accuracy:  93.8%, validation accuracy:  90.6%, validation loss: 0.267
+Training Epoch 11 --- Training accuracy: 100.0%, validation accuracy:  87.5%, validation loss: 0.270
+Training Epoch 12 --- Training accuracy: 100.0%, validation accuracy: 100.0%, validation loss: 0.073
+Training Epoch 13 --- Training accuracy:  93.8%, validation accuracy:  96.9%, validation loss: 0.134
+Training Epoch 14 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.099
+Finished training for test fold 12
+Accuracy: 50.39370078740157%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[64  0]
+ [63  0]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.50      1.00      0.67        64
+     neutral       0.00      0.00      0.00        63
+
+ avg / total       0.25      0.50      0.34       127
+
+Current training data:
+Size of current test fold: 144
+Size of current dataset: 4946
+Current validation data:
+Size of current test fold: 15
+Size of current dataset: 538
+STARTING NEW TRAINING --- TEST FOLD: 14 OUT OF 21
+Training Epoch 1 --- Training accuracy:  56.2%, validation accuracy:  65.6%, validation loss: 1.064
+Training Epoch 2 --- Training accuracy:  62.5%, validation accuracy:  59.4%, validation loss: 0.996
+Training Epoch 3 --- Training accuracy:  62.5%, validation accuracy:  56.2%, validation loss: 0.996
+Training Epoch 4 --- Training accuracy:  68.8%, validation accuracy:  62.5%, validation loss: 0.892
+Training Epoch 5 --- Training accuracy:  68.8%, validation accuracy:  78.1%, validation loss: 0.753
+Training Epoch 6 --- Training accuracy:  71.9%, validation accuracy:  75.0%, validation loss: 0.514
+Training Epoch 7 --- Training accuracy:  84.4%, validation accuracy:  93.8%, validation loss: 0.464
+Training Epoch 8 --- Training accuracy:  87.5%, validation accuracy:  78.1%, validation loss: 0.416
+Training Epoch 9 --- Training accuracy:  84.4%, validation accuracy:  87.5%, validation loss: 0.261
+Training Epoch 10 --- Training accuracy:  90.6%, validation accuracy:  93.8%, validation loss: 0.108
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  87.5%, validation loss: 0.231
+Training Epoch 12 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.059
+Training Epoch 13 --- Training accuracy:  90.6%, validation accuracy: 100.0%, validation loss: 0.087
+Training Epoch 14 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.135
+Finished training for test fold 13
+Accuracy: 63.52201257861635%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[12  0 52]
+ [ 0  0  0]
+ [ 0  6 89]]
+/home/lucia/Documents/GMT-SP/FacialExpressionsClassifier/facialexp/local/lib/python2.7/site-packages/sklearn/metrics/classification.py:1137: UndefinedMetricWarning: Recall and F-score are ill-defined and being set to 0.0 in labels with no true samples.
+  'recall', 'true', average, warn_for)
+              precision    recall  f1-score   support
+
+enthusiastic       1.00      0.19      0.32        64
+     neutral       0.00      0.00      0.00         0
+   concerned       0.63      0.94      0.75        95
+
+ avg / total       0.78      0.64      0.58       159
+
+Current training data:
+Size of current test fold: 172
+Size of current dataset: 4918
+Current validation data:
+Size of current test fold: 19
+Size of current dataset: 534
+STARTING NEW TRAINING --- TEST FOLD: 15 OUT OF 21
+Training Epoch 1 --- Training accuracy:  40.6%, validation accuracy:  62.5%, validation loss: 1.030
+Training Epoch 2 --- Training accuracy:  40.6%, validation accuracy:  59.4%, validation loss: 0.969
+Training Epoch 3 --- Training accuracy:  40.6%, validation accuracy:  56.2%, validation loss: 0.990
+Training Epoch 4 --- Training accuracy:  50.0%, validation accuracy:  62.5%, validation loss: 0.866
+Training Epoch 5 --- Training accuracy:  59.4%, validation accuracy:  62.5%, validation loss: 0.778
+Training Epoch 6 --- Training accuracy:  62.5%, validation accuracy:  68.8%, validation loss: 0.544
+Training Epoch 7 --- Training accuracy:  75.0%, validation accuracy:  71.9%, validation loss: 0.566
+Training Epoch 8 --- Training accuracy:  75.0%, validation accuracy:  84.4%, validation loss: 0.260
+Training Epoch 9 --- Training accuracy:  81.2%, validation accuracy:  93.8%, validation loss: 0.163
+Training Epoch 10 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.066
+Training Epoch 11 --- Training accuracy:  93.8%, validation accuracy:  87.5%, validation loss: 0.224
+Training Epoch 12 --- Training accuracy:  96.9%, validation accuracy:  87.5%, validation loss: 0.230
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.107
+Training Epoch 14 --- Training accuracy: 100.0%, validation accuracy:  93.8%, validation loss: 0.113
+Finished training for test fold 14
+Accuracy: 65.96858638743456%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 0  0 32]
+ [ 0 32 32]
+ [ 1  0 94]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.00      0.00      0.00        32
+     neutral       1.00      0.50      0.67        64
+   concerned       0.59      0.99      0.74        95
+
+ avg / total       0.63      0.66      0.59       191
+
+Current training data:
+Size of current test fold: 230
+Size of current dataset: 4860
+Current validation data:
+Size of current test fold: 25
+Size of current dataset: 528
+STARTING NEW TRAINING --- TEST FOLD: 16 OUT OF 21
+Training Epoch 1 --- Training accuracy:  25.0%, validation accuracy:  28.1%, validation loss: 1.106
+Training Epoch 2 --- Training accuracy:  46.9%, validation accuracy:  71.9%, validation loss: 0.924
+Training Epoch 3 --- Training accuracy:  46.9%, validation accuracy:  65.6%, validation loss: 0.914
+Training Epoch 4 --- Training accuracy:  53.1%, validation accuracy:  56.2%, validation loss: 0.914
+Training Epoch 5 --- Training accuracy:  68.8%, validation accuracy:  65.6%, validation loss: 0.676
+Training Epoch 6 --- Training accuracy:  68.8%, validation accuracy:  65.6%, validation loss: 0.653
+Training Epoch 7 --- Training accuracy:  78.1%, validation accuracy:  78.1%, validation loss: 0.507
+Training Epoch 8 --- Training accuracy:  90.6%, validation accuracy:  93.8%, validation loss: 0.217
+Training Epoch 9 --- Training accuracy:  93.8%, validation accuracy:  90.6%, validation loss: 0.284
+Training Epoch 10 --- Training accuracy:  96.9%, validation accuracy:  87.5%, validation loss: 0.210
+Training Epoch 11 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.103
+Training Epoch 12 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.121
+Training Epoch 13 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.065
+Training Epoch 14 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.034
+Finished training for test fold 15
+Accuracy: 56.470588235294116%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[  0  23  41]
+ [  0  33  31]
+ [  0  16 111]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.00      0.00      0.00        64
+     neutral       0.46      0.52      0.49        64
+   concerned       0.61      0.87      0.72       127
+
+ avg / total       0.42      0.56      0.48       255
+
+Current training data:
+Size of current test fold: 345
+Size of current dataset: 4745
+Current validation data:
+Size of current test fold: 38
+Size of current dataset: 515
+STARTING NEW TRAINING --- TEST FOLD: 17 OUT OF 21
+Training Epoch 1 --- Training accuracy:  37.5%, validation accuracy:  59.4%, validation loss: 1.047
+Training Epoch 2 --- Training accuracy:  43.8%, validation accuracy:  46.9%, validation loss: 1.049
+Training Epoch 3 --- Training accuracy:  43.8%, validation accuracy:  53.1%, validation loss: 1.030
+Training Epoch 4 --- Training accuracy:  46.9%, validation accuracy:  43.8%, validation loss: 1.060
+Training Epoch 5 --- Training accuracy:  71.9%, validation accuracy:  68.8%, validation loss: 0.790
+Training Epoch 6 --- Training accuracy:  75.0%, validation accuracy:  68.8%, validation loss: 0.615
+Training Epoch 7 --- Training accuracy:  78.1%, validation accuracy:  71.9%, validation loss: 0.636
+Training Epoch 8 --- Training accuracy:  78.1%, validation accuracy:  87.5%, validation loss: 0.390
+Training Epoch 9 --- Training accuracy:  93.8%, validation accuracy:  84.4%, validation loss: 0.357
+Training Epoch 10 --- Training accuracy: 100.0%, validation accuracy:  90.6%, validation loss: 0.196
+Training Epoch 11 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.234
+Training Epoch 12 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.076
+Training Epoch 13 --- Training accuracy: 100.0%, validation accuracy:  96.9%, validation loss: 0.122
+Training Epoch 14 --- Training accuracy: 100.0%, validation accuracy: 100.0%, validation loss: 0.053
+Training Epoch 15 --- Training accuracy: 100.0%, validation accuracy: 100.0%, validation loss: 0.082
+Finished training for test fold 16
+Accuracy: 83.81201044386422%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 93  19  16]
+ [  0  64   0]
+ [ 10  17 164]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.90      0.73      0.81       128
+     neutral       0.64      1.00      0.78        64
+   concerned       0.91      0.86      0.88       191
+
+ avg / total       0.86      0.84      0.84       383
+
+Current training data:
+Size of current test fold: 403
+Size of current dataset: 4687
+Current validation data:
+Size of current test fold: 44
+Size of current dataset: 509
+STARTING NEW TRAINING --- TEST FOLD: 18 OUT OF 21
+Training Epoch 1 --- Training accuracy:  46.9%, validation accuracy:  50.0%, validation loss: 1.053
+Training Epoch 2 --- Training accuracy:  43.8%, validation accuracy:  50.0%, validation loss: 1.041
+Training Epoch 3 --- Training accuracy:  43.8%, validation accuracy:  65.6%, validation loss: 0.929
+Training Epoch 4 --- Training accuracy:  62.5%, validation accuracy:  65.6%, validation loss: 0.919
+Training Epoch 5 --- Training accuracy:  75.0%, validation accuracy:  75.0%, validation loss: 0.807
+Training Epoch 6 --- Training accuracy:  78.1%, validation accuracy:  84.4%, validation loss: 0.513
+Training Epoch 7 --- Training accuracy:  78.1%, validation accuracy:  81.2%, validation loss: 0.493
+Training Epoch 8 --- Training accuracy:  78.1%, validation accuracy:  68.8%, validation loss: 0.571
+Training Epoch 9 --- Training accuracy:  93.8%, validation accuracy:  93.8%, validation loss: 0.279
+Training Epoch 10 --- Training accuracy:  96.9%, validation accuracy:  93.8%, validation loss: 0.272
+Training Epoch 11 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.117
+Training Epoch 12 --- Training accuracy:  96.9%, validation accuracy:  90.6%, validation loss: 0.119
+Training Epoch 13 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.071
+Training Epoch 14 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.037
+Training Epoch 15 --- Training accuracy:  96.9%, validation accuracy:  96.9%, validation loss: 0.173
+Finished training for test fold 17
+Accuracy: 51.006711409395976%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 64  32   0]
+ [  1 125   2]
+ [  7 177  39]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.89      0.67      0.76        96
+     neutral       0.37      0.98      0.54       128
+   concerned       0.95      0.17      0.30       223
+
+ avg / total       0.77      0.51      0.47       447
+
+Current training data:
+Size of current test fold: 172
+Size of current dataset: 4918
+Current validation data:
+Size of current test fold: 19
+Size of current dataset: 534
+STARTING NEW TRAINING --- TEST FOLD: 19 OUT OF 21
+Training Epoch 1 --- Training accuracy:  34.4%, validation accuracy:  34.4%, validation loss: 1.102
+Training Epoch 2 --- Training accuracy:  31.2%, validation accuracy:  53.1%, validation loss: 1.010
+Training Epoch 3 --- Training accuracy:  31.2%, validation accuracy:  43.8%, validation loss: 1.054
+Training Epoch 4 --- Training accuracy:  43.8%, validation accuracy:  62.5%, validation loss: 0.939
+Training Epoch 5 --- Training accuracy:  56.2%, validation accuracy:  75.0%, validation loss: 0.673
+Training Epoch 6 --- Training accuracy:  68.8%, validation accuracy:  68.8%, validation loss: 0.720
+Training Epoch 7 --- Training accuracy:  71.9%, validation accuracy:  71.9%, validation loss: 0.594
+Training Epoch 8 --- Training accuracy:  84.4%, validation accuracy:  84.4%, validation loss: 0.400
+Training Epoch 9 --- Training accuracy:  84.4%, validation accuracy:  84.4%, validation loss: 0.324
+Training Epoch 10 --- Training accuracy:  90.6%, validation accuracy:  87.5%, validation loss: 0.320
+Training Epoch 11 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.187
+Training Epoch 12 --- Training accuracy:  93.8%, validation accuracy: 100.0%, validation loss: 0.089
+Training Epoch 13 --- Training accuracy:  93.8%, validation accuracy:  96.9%, validation loss: 0.090
+Training Epoch 14 --- Training accuracy:  93.8%, validation accuracy:  93.8%, validation loss: 0.222
+Finished training for test fold 18
+Accuracy: 52.35602094240838%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 5 91]
+ [ 0 95]]
+              precision    recall  f1-score   support
+
+enthusiastic       1.00      0.05      0.10        96
+     neutral       0.51      1.00      0.68        95
+
+ avg / total       0.76      0.52      0.39       191
+
+Current training data:
+Size of current test fold: 288
+Size of current dataset: 4802
+Current validation data:
+Size of current test fold: 31
+Size of current dataset: 522
+STARTING NEW TRAINING --- TEST FOLD: 20 OUT OF 21
+Training Epoch 1 --- Training accuracy:  28.1%, validation accuracy:  15.6%, validation loss: 1.098
+Training Epoch 2 --- Training accuracy:  46.9%, validation accuracy:  59.4%, validation loss: 0.982
+Training Epoch 3 --- Training accuracy:  46.9%, validation accuracy:  46.9%, validation loss: 1.039
+Training Epoch 4 --- Training accuracy:  50.0%, validation accuracy:  56.2%, validation loss: 0.955
+Training Epoch 5 --- Training accuracy:  56.2%, validation accuracy:  75.0%, validation loss: 0.646
+Training Epoch 6 --- Training accuracy:  68.8%, validation accuracy:  68.8%, validation loss: 0.635
+Training Epoch 7 --- Training accuracy:  68.8%, validation accuracy:  78.1%, validation loss: 0.611
+Training Epoch 8 --- Training accuracy:  75.0%, validation accuracy:  87.5%, validation loss: 0.322
+Training Epoch 9 --- Training accuracy:  87.5%, validation accuracy:  96.9%, validation loss: 0.118
+Training Epoch 10 --- Training accuracy:  93.8%, validation accuracy:  93.8%, validation loss: 0.215
+Training Epoch 11 --- Training accuracy:  96.9%, validation accuracy:  90.6%, validation loss: 0.218
+Training Epoch 12 --- Training accuracy:  87.5%, validation accuracy:  93.8%, validation loss: 0.164
+Training Epoch 13 --- Training accuracy:  93.8%, validation accuracy:  96.9%, validation loss: 0.131
+Training Epoch 14 --- Training accuracy:  93.8%, validation accuracy: 100.0%, validation loss: 0.071
+Finished training for test fold 19
+Accuracy: 62.06896551724138%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[53  1 10]
+ [ 0 96  0]
+ [85 25 49]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.38      0.83      0.52        64
+     neutral       0.79      1.00      0.88        96
+   concerned       0.83      0.31      0.45       159
+
+ avg / total       0.73      0.62      0.59       319
+
+Current training data:
+Size of current test fold: 287
+Size of current dataset: 4803
+Current validation data:
+Size of current test fold: 31
+Size of current dataset: 522
+STARTING NEW TRAINING --- TEST FOLD: 21 OUT OF 21
+Training Epoch 1 --- Training accuracy:  28.1%, validation accuracy:  40.6%, validation loss: 1.099
+Training Epoch 2 --- Training accuracy:  43.8%, validation accuracy:  43.8%, validation loss: 1.074
+Training Epoch 3 --- Training accuracy:  43.8%, validation accuracy:  56.2%, validation loss: 0.976
+Training Epoch 4 --- Training accuracy:  43.8%, validation accuracy:  50.0%, validation loss: 1.038
+Training Epoch 5 --- Training accuracy:  68.8%, validation accuracy:  68.8%, validation loss: 0.857
+Training Epoch 6 --- Training accuracy:  87.5%, validation accuracy:  75.0%, validation loss: 0.608
+Training Epoch 7 --- Training accuracy:  87.5%, validation accuracy:  87.5%, validation loss: 0.373
+Training Epoch 8 --- Training accuracy:  93.8%, validation accuracy:  75.0%, validation loss: 0.439
+Training Epoch 9 --- Training accuracy:  96.9%, validation accuracy:  81.2%, validation loss: 0.223
+Training Epoch 10 --- Training accuracy:  90.6%, validation accuracy:  96.9%, validation loss: 0.214
+Training Epoch 11 --- Training accuracy:  96.9%, validation accuracy: 100.0%, validation loss: 0.041
+Training Epoch 12 --- Training accuracy: 100.0%, validation accuracy:  90.6%, validation loss: 0.413
+Training Epoch 13 --- Training accuracy: 100.0%, validation accuracy: 100.0%, validation loss: 0.085
+Training Epoch 14 --- Training accuracy: 100.0%, validation accuracy: 100.0%, validation loss: 0.052
+Finished training for test fold 20
+Accuracy: 62.57861635220125%
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 36   0  60]
+ [  0  28  36]
+ [ 23   0 135]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.61      0.38      0.46        96
+     neutral       1.00      0.44      0.61        64
+   concerned       0.58      0.85      0.69       158
+
+ avg / total       0.68      0.63      0.61       318
+
+Confusion matrix: (elements are C_ij, where i is the true class and j the predicted class)
+['enthusiastic', 'neutral', 'concerned']
+[[ 615  206  399]
+ [  76 1112  412]
+ [ 406  640 1777]]
+              precision    recall  f1-score   support
+
+enthusiastic       0.56      0.50      0.53      1220
+     neutral       0.57      0.69      0.63      1600
+   concerned       0.69      0.63      0.66      2823
+
+ avg / total       0.63      0.62      0.62      5643
+
