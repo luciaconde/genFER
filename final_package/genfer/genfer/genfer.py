@@ -3,6 +3,7 @@ import os,glob
 
 import video_predicting as vp
 import video_processing as vproc
+import quality_verification as qver
 
 # Pre-trained models identifiers
 MMI = 0
@@ -13,7 +14,8 @@ models = ['mmi/','mmitt/']
 ANNOT_MMI = 0
 ANNOT_TT = 1
 
-# Evaluate a specific video using one of the default pre-trained models included in genFER
+''' predictVideoDefault: evaluate a single specific video
+using one of the default pre-trained models included in genFER'''
 def predictVideoDefault(video_file, video_path, nmodel, save_path):
     video_title = os.path.splitext(video_file)[0]
     classes = ['enthusiastic','neutral','concerned']
@@ -42,6 +44,8 @@ def predictVideoDefault(video_file, video_path, nmodel, save_path):
     # Clean all the files created by OpenFace
     vproc.deleteProcessData(video_path)
 
+''' predictVideoDefault: evaluate a set of videos contained in the videos_path directory
+using one of the default pre-trained models included in genFER'''
 def predictVideoSetDefault(videos_path, nmodel, save_path):
     classes = ['enthusiastic','neutral','concerned']
     img_height = 90
@@ -108,7 +112,25 @@ class Model(object):
     def list_classes(self):
         return self._list_classes
 
+    ''''verifyVideoSetQuality: run the quality verification on all videos contained inside the videos path'''
+    def verifyVideoSetQuality(self):
+        qver.runQualityVerification(self._data_path+'videos/',self._data_path+'discarded_videos.txt')
+        vproc.deleteProcessData(self._data_path+'videos/')
 
+    '''verifyVideoQuality: run the quality verification on a single specific video, given by its absolute path
+    (note that the folder containing the video must only contain this video or other .mp4 videos!)'''
+    def verifyVideoQuality(self, video_path, video_file):
+        os.system('./faceDetectorExtraction.sh '+video_file+' '+video_path)
+        video_name = os.path.splitext(video_file)[0]
+        videoPassesTest, cause = qver.verifyQuality(video_path, video_name)
+        if videoPassesTest!=True:
+            print 'The video passed the quality verification test'
+        else:
+            print 'The video did not pass the quality verification test -- reason: '+cause
+        vproc.deleteProcessData(video_path)
+
+    '''videoSetProcessing: process all videos to extract the face images,
+    order them per class for the training and perform image pre-processing on them'''
     def videoSetProcessing(self, annot_type):
         if annot_type==0: # MMI-based annotations format
             vproc.videoProcessorMMI(self._data_path, self._list_classes)

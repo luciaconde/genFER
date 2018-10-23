@@ -231,8 +231,8 @@ def getVideoLabel(video, video_names, labels):
 
 def videoProcessorMMI(data_path, classes):
     # Get the list of names of the video files
-    videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
     videos_path = data_path+'videos/'
+    videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
     video_names, labels = readAnnotationsMMI(data_path+'annotations/mmi_annot.csv')
     frames_step = 8
 
