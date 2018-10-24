@@ -1,5 +1,5 @@
 import numpy as np
-import os,glob
+import os,glob,shutil
 
 import video_predicting as vp
 import video_processing as vproc
@@ -19,19 +19,25 @@ ANNOT_TT = 1
 # Default classes identifiers
 DEFAULT_EXPR = ['enthusiastic','neutral','concerned']
 
+
+
 ''' predictVideoDefault: evaluate a single specific video
 using one of the default pre-trained models included in genFER'''
 def predictVideoDefault(video_file, video_path, nmodel, save_path):
+    model_path = 'defaultmodels/'
+    model_folder = models[nmodel]
+    predictVideoGeneral(video_file, video_path, 'face-exp-model'+str(nmodel), save_path, model_path, model_folder)
+
+def predictVideoGeneral(video_file, video_path, name_model, save_path, model_path, model_folder):
     video_title = os.path.splitext(video_file)[0]
     path_model = 'defaultmodels/'
-    img_height = 90
-    img_width = 90
+    img_size = 90
 
     vp.extractFaceImages(video_file, video_path)
 
     face_images = vp.loadFaceImages(video_file,video_path)
 
-    labels, confidence = vp.predictVideo(face_images,nmodel,img_height,img_width, DEFAULT_EXPR, path_model, models[nmodel]) # Predict the facial expression label for each of the face images (that is, for each video frame)
+    labels, confidence = vp.predictVideo(face_images,name_model,img_size,img_size, DEFAULT_EXPR, model_path, model_folder) # Predict the facial expression label for each of the face images (that is, for each video frame)
 #print 'Predicted labels: '+str(labels)
     clean_labels = vp.cleanLabels(labels)
 #print 'Cleaned labels: '+str(clean_labels)
@@ -51,8 +57,6 @@ def predictVideoDefault(video_file, video_path, nmodel, save_path):
 ''' predictVideoDefault: evaluate a set of videos contained in the videos_path directory
 using one of the default pre-trained models included in genFER'''
 def predictVideoSetDefault(videos_path, nmodel, save_path):
-    img_height = 90
-    img_width = 90
     videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
 
     for video in videosList:
@@ -102,6 +106,7 @@ class Model(object):
                     os.makedirs(data_path+'classes/'+label+'/')
             if not os.path.exists(data_path+'models/'):
                 os.makedirs(data_path+'models/')
+                os.makedirs(data_path+'models/saved/')
             # Check if the (manually created) required folders exist
             if not os.path.exists(data_path+'videos/') or not os.path.exists(data_path+'annotations/'):
                 print 'WARNING: required folders were not found! (videos/ and/or annotations/)'
@@ -147,4 +152,39 @@ class Model(object):
 
     def trainCNN(self, eval_type, dataset_type, input_type, valid_size, nfolds, batch_size, num_iter):
         cnntrain.trainer(eval_type, dataset_type, input_type, valid_size, nfolds, batch_size, num_iter, self._list_classes, self._data_path)
+        
+    def saveModel(self, model_name, new_name):
+        models_path = self._data_path+'models/'
+        saved_path = models_path+'saved/'+new_name+'/'
+        if os.path.exists(models_path+model_name+'.meta'):
+            # Move all the model files to its own subfolder within models/saved/
+            os.makedirs(saved_path)
+            shutil.move(models_path+model_name+'.meta', saved_path+new_name+'.meta')
+            shutil.move(models_path+model_name+'.index', saved_path+new_name+'.index')
+            shutil.move(models_path+model_name+'.data-00000-of-00001', saved_path+new_name+'.data-00000-of-00001')
+            # Create the corresponding checkpoint file for restoring the model
+            f = open(saved_path+'checkpoint','w+')
+            f.write('model_checkpoint_path: "'+saved_path+new_name+'"\n')
+            f.write('all_model_checkpoint_paths: "'+saved_path+new_name+'"')
+            f.close()
+        else:
+            print 'WARNING: indicated model does not exist!'
+            
+    def predictVideoCustom(self, video_file, video_path, model_name, save_path):
+        model_path = self._data_path+'models/saved/'
+        model_folder = model_name+'/'
+        predictVideoGeneral(video_file, video_path, model_name, save_path, model_path, model_folder)
+        
+    ''' predictVideoDefault: evaluate a set of videos contained in the videos_path directory
+    using one of the default pre-trained models included in genFER'''
+    def predictVideoSetCustom(self, videos_path, model_name, save_path):
+        model_path = self._data_path+'models/saved/'
+        model_folder = model_name+'/'
+        videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
 
+        for video in videosList:
+            if os.path.isfile(os.path.join(videos_path, video)):
+                predictVideoGeneral(video, videos_path, model_name, save_path, model_path, model_folder)
+        
+        # # Clean all the remaining files created by OpenFace
+        vproc.deleteProcessData(videos_path)

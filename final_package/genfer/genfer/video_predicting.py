@@ -8,7 +8,7 @@ import sklearn
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
-def predictVideo(images, nmodel, img_height, img_width, classes, path_model, folder_model):
+def predictVideo(images, name_model, img_height, img_width, classes, path_model, folder_model):
     '''Inputs each extracted aligned face image (from each frame of the video) into the trained
     neural network and store its prediction.
     Outputs the list of all predictions in order of frames.'''
@@ -36,7 +36,7 @@ def predictVideo(images, nmodel, img_height, img_width, classes, path_model, fol
         ## Restore the saved model of the neural network
         sess = tf.Session()
         # Import the network graph
-        saver = tf.train.import_meta_graph(path_model+folder_model+'face-exp-model{}.meta'.format(nmodel))
+        saver = tf.train.import_meta_graph(path_model+folder_model+'{}.meta'.format(name_model))
         # Load the stored weights
         saver.restore(sess, tf.train.latest_checkpoint(path_model+folder_model))
 
