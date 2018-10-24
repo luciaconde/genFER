@@ -4,6 +4,8 @@ import os,glob
 import video_predicting as vp
 import video_processing as vproc
 import quality_verification as qver
+import cnn_training as cnntrain
+import dataset
 
 # Pre-trained models identifiers
 MMI = 0
@@ -14,11 +16,13 @@ models = ['mmi/','mmitt/']
 ANNOT_MMI = 0
 ANNOT_TT = 1
 
+# Default classes identifiers
+DEFAULT_EXPR = ['enthusiastic','neutral','concerned']
+
 ''' predictVideoDefault: evaluate a single specific video
 using one of the default pre-trained models included in genFER'''
 def predictVideoDefault(video_file, video_path, nmodel, save_path):
     video_title = os.path.splitext(video_file)[0]
-    classes = ['enthusiastic','neutral','concerned']
     path_model = 'defaultmodels/'
     img_height = 90
     img_width = 90
@@ -27,7 +31,7 @@ def predictVideoDefault(video_file, video_path, nmodel, save_path):
 
     face_images = vp.loadFaceImages(video_file,video_path)
 
-    labels, confidence = vp.predictVideo(face_images,nmodel,img_height,img_width, classes, path_model, models[nmodel]) # Predict the facial expression label for each of the face images (that is, for each video frame)
+    labels, confidence = vp.predictVideo(face_images,nmodel,img_height,img_width, DEFAULT_EXPR, path_model, models[nmodel]) # Predict the facial expression label for each of the face images (that is, for each video frame)
 #print 'Predicted labels: '+str(labels)
     clean_labels = vp.cleanLabels(labels)
 #print 'Cleaned labels: '+str(clean_labels)
@@ -47,7 +51,6 @@ def predictVideoDefault(video_file, video_path, nmodel, save_path):
 ''' predictVideoDefault: evaluate a set of videos contained in the videos_path directory
 using one of the default pre-trained models included in genFER'''
 def predictVideoSetDefault(videos_path, nmodel, save_path):
-    classes = ['enthusiastic','neutral','concerned']
     img_height = 90
     img_width = 90
     videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
@@ -75,7 +78,7 @@ def confidenceLevelsVideoSetDefault(videos_path,nmodel):
         if os.path.isfile(os.path.join(videos_path, video)):
             #extractFaceImages(video, videos_path)
             face_images = vp.loadFaceImages(video,videos_path)
-            labels, confidence = vp.predictVideo(face_images,nmodel,img_height,img_width, classes, models[nmodel]) # Run the model
+            labels, confidence = vp.predictVideo(face_images,nmodel,img_height,img_width, DEFAULT_EXPR, models[nmodel]) # Run the model
             confidence_videoset.append([video]+confidence) # Store the mean and standard deviation of the per-frame confidence levels, representative of confidence of full video
     
     sorted(confidence_videoset, key=lambda x: x[1]) # Sort them per ascending mean value
@@ -93,10 +96,12 @@ class Model(object):
 
         try:
             # Create all (automatically created) required folders
-            os.makedirs(data_path+'classes/')
-            os.makedirs(data_path+'models/')
-            for label in list_classes: # Create a subfolder per each of the facial expressions
-                os.makedirs(data_path+'classes/'+label+'/')
+            if not os.path.exists(data_path+'classes/'):
+                os.makedirs(data_path+'classes/')
+                for label in list_classes: # Create a subfolder per each of the facial expressions
+                    os.makedirs(data_path+'classes/'+label+'/')
+            if not os.path.exists(data_path+'models/'):
+                os.makedirs(data_path+'models/')
             # Check if the (manually created) required folders exist
             if not os.path.exists(data_path+'videos/') or not os.path.exists(data_path+'annotations/'):
                 print 'WARNING: required folders were not found! (videos/ and/or annotations/)'
@@ -140,6 +145,6 @@ class Model(object):
             print 'WARNING: wrong annotation type code, videos could not be processed'
         vproc.deleteProcessData(self._data_path+'videos/')
 
-    def trainCNN(self, eval_type, valid_size, nfolds):
-        pass
+    def trainCNN(self, eval_type, dataset_type, input_type, valid_size, nfolds, batch_size, num_iter):
+        cnntrain.trainer(eval_type, dataset_type, input_type, valid_size, nfolds, batch_size, num_iter, self._list_classes, self._data_path)
 
