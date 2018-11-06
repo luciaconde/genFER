@@ -7,9 +7,9 @@ import sklearn
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
-def testCNN(images, cls, nmodel, img_height, img_width, data_path):
+def testCNN(images, cls, nmodel, img_height, img_width, data_path, classes):
     image_size=90
-    classes = ['enthusiastic','neutral','concerned']
+    #classes = ['enthusiastic','neutral','concerned']
     num_classes = len(classes)
     predict_cls = []
     num_channels=1

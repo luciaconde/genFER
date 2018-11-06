@@ -9,35 +9,42 @@ import dataset
 
 # Pre-trained models identifiers
 MMI = 0
-MMITT = 1
-models = ['mmi/','mmitt/']
+MMI2 = 1
+MMITT = 2
+models = ['mmi/','mmi2/','mmitt/']
 
 # Annotation types identifiers
 ANNOT_MMI = 0
 ANNOT_TT = 1
 
 # Default classes identifiers
-DEFAULT_EXPR = ['enthusiastic','neutral','concerned']
+DEFAULT_EXPR = ['concerned','enthusiastic','neutral']
 
 
 
 ''' predictVideoDefault: evaluate a single specific video
 using one of the default pre-trained models included in genFER'''
 def predictVideoDefault(video_file, video_path, nmodel, save_path):
+    img_size = 90
     model_path = 'defaultmodels/'
     model_folder = models[nmodel]
-    predictVideoGeneral(video_file, video_path, 'face-exp-model'+str(nmodel), save_path, model_path, model_folder)
+    predictVideoGeneral(video_file, video_path, 'face-exp-model'+str(nmodel), save_path, model_path, model_folder, img_size, img_size)
 
-def predictVideoGeneral(video_file, video_path, name_model, save_path, model_path, model_folder):
+'''predictVideoGeneral: function for evaluating a specific video,
+it is called by all the other user-oriented video predicting functions
+(predictVideoDefault/predictVideoSetDefault for running predictions
+using one of the included pre-trained models, and
+predictVideoCustom/predictVideoSetCustom for running predictions
+using a custom model trained by the user)'''
+def predictVideoGeneral(video_file, video_path, name_model, save_path, model_path, model_folder, img_height, img_width):
     video_title = os.path.splitext(video_file)[0]
-    path_model = 'defaultmodels/'
-    img_size = 90
+    #img_size = 90
 
     vp.extractFaceImages(video_file, video_path)
 
     face_images = vp.loadFaceImages(video_file,video_path)
 
-    labels, confidence = vp.predictVideo(face_images,name_model,img_size,img_size, DEFAULT_EXPR, model_path, model_folder) # Predict the facial expression label for each of the face images (that is, for each video frame)
+    labels, confidence = vp.predictVideo(face_images,name_model,img_height,img_width, DEFAULT_EXPR, model_path, model_folder) # Predict the facial expression label for each of the face images (that is, for each video frame)
 #print 'Predicted labels: '+str(labels)
     clean_labels = vp.cleanLabels(labels)
 #print 'Cleaned labels: '+str(clean_labels)
@@ -69,7 +76,8 @@ def predictVideoSetDefault(videos_path, nmodel, save_path):
 # CONFIDENCE LEVEL CALCULATION OF VIDEO SET for active learning
 def confidenceLevelsVideoSetDefault(videos_path,nmodel):
     # Get the list of names of the video files
-    classes = ['enthusiastic','neutral','concerned']
+    classes = ['concerned','enthusiastic','neutral']
+    model_path = 'defaultmodels/'
     img_height = 90
     img_width = 90
     videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
@@ -82,7 +90,8 @@ def confidenceLevelsVideoSetDefault(videos_path,nmodel):
         if os.path.isfile(os.path.join(videos_path, video)):
             #extractFaceImages(video, videos_path)
             face_images = vp.loadFaceImages(video,videos_path)
-            labels, confidence = vp.predictVideo(face_images,nmodel,img_height,img_width, DEFAULT_EXPR, models[nmodel]) # Run the model
+            print 'Current video: '+str(video)
+            labels, confidence = vp.predictVideo(face_images,'face-exp-model'+str(nmodel),img_height,img_width, DEFAULT_EXPR, model_path, models[nmodel]) # Run the model
             confidence_videoset.append([video]+confidence) # Store the mean and standard deviation of the per-frame confidence levels, representative of confidence of full video
     
     sorted(confidence_videoset, key=lambda x: x[1]) # Sort them per ascending mean value
@@ -91,6 +100,11 @@ def confidenceLevelsVideoSetDefault(videos_path,nmodel):
 
     for video in confidence_videoset: # Print the confidence levels of all videos, in ascending order
         print str(video[0])+" -- "+"mean cnf: "+str(video[1])+", stddev conf: "+str(video[2])
+        
+    # Clean all the files created by OpenFace
+    vproc.deleteProcessData(videos_path)
+
+
 
 class Model(object):
 
@@ -122,13 +136,14 @@ class Model(object):
     def list_classes(self):
         return self._list_classes
 
-    ''''verifyVideoSetQuality: run the quality verification on all videos contained inside the videos path'''
+    ''''verifyVideoSetQuality: run the quality verification on all videos contained inside the videos path
+    (note that the folder containing the video must only contain (non .avi) videos!)'''
     def verifyVideoSetQuality(self):
         qver.runQualityVerification(self._data_path+'videos/',self._data_path+'discarded_videos.txt')
         vproc.deleteProcessData(self._data_path+'videos/')
 
     '''verifyVideoQuality: run the quality verification on a single specific video, given by its absolute path
-    (note that the folder containing the video must only contain this video or other .mp4 videos!)'''
+    (note that the folder containing the video must only contain this video or other (non .avi) videos!)'''
     def verifyVideoQuality(self, video_path, video_file):
         os.system('./faceDetectorExtraction.sh '+video_file+' '+video_path)
         video_name = os.path.splitext(video_file)[0]
@@ -150,6 +165,7 @@ class Model(object):
             print 'WARNING: wrong annotation type code, videos could not be processed'
         vproc.deleteProcessData(self._data_path+'videos/')
 
+    '''trainCNN: train and cross-validate the CNN model (see cnn_training.py for a more detailed explanation)'''
     def trainCNN(self, eval_type, dataset_type, input_type, valid_size, nfolds, batch_size, num_iter):
         cnntrain.trainer(eval_type, dataset_type, input_type, valid_size, nfolds, batch_size, num_iter, self._list_classes, self._data_path)
         
@@ -170,21 +186,65 @@ class Model(object):
         else:
             print 'WARNING: indicated model does not exist!'
             
-    def predictVideoCustom(self, video_file, video_path, model_name, save_path):
+    ''' predictVideoCustom: evaluate a single specific video
+    using a custom trained model'''
+    def predictVideoCustom(self, video_file, video_path, model_name, save_path, input_type):
         model_path = self._data_path+'models/saved/'
         model_folder = model_name+'/'
-        predictVideoGeneral(video_file, video_path, model_name, save_path, model_path, model_folder)
+        img_width = 90
+        if input_type == dataset.INPUT_FULLFACE:
+            img_height = 90
+        else:
+            img_height = 30
+        predictVideoGeneral(video_file, video_path, model_name, save_path, model_path, model_folder, img_height, img_width)
         
-    ''' predictVideoDefault: evaluate a set of videos contained in the videos_path directory
-    using one of the default pre-trained models included in genFER'''
-    def predictVideoSetCustom(self, videos_path, model_name, save_path):
+    ''' predictVideoSetCustom: evaluate a set of videos contained in the videos_path directory
+    using a custom trained model'''
+    def predictVideoSetCustom(self, videos_path, model_name, save_path, input_type):
         model_path = self._data_path+'models/saved/'
         model_folder = model_name+'/'
         videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
 
+        img_width = 90
+        if input_type == dataset.INPUT_FULLFACE:
+            img_height = 90
+        else:
+            img_height = 30
+
         for video in videosList:
             if os.path.isfile(os.path.join(videos_path, video)):
-                predictVideoGeneral(video, videos_path, model_name, save_path, model_path, model_folder)
+                predictVideoGeneral(video, videos_path, model_name, save_path, model_path, model_folder, img_height, img_width)
         
         # # Clean all the remaining files created by OpenFace
+        vproc.deleteProcessData(videos_path)
+        
+        
+    def confidenceLevelsVideoSetCustom(self,videos_path,name_model):
+        # Get the list of names of the video files
+        classes = ['enthusiastic','neutral','concerned']
+        model_path = self._data_path+'models/saved/'
+        img_height = 90
+        img_width = 90
+        videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
+        confidence_videoset = []
+
+        for video in videosList:
+            if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
+                vp.extractFaceImages(video, videos_path)
+        for video in videosList:
+            if os.path.isfile(os.path.join(videos_path, video)):
+                #extractFaceImages(video, videos_path)
+                face_images = vp.loadFaceImages(video,videos_path)
+                print 'Current video: '+str(video)
+                labels, confidence = vp.predictVideo(face_images,name_model,img_height,img_width, DEFAULT_EXPR, model_path, name_model+'/') # Run the model
+                confidence_videoset.append([video]+confidence) # Store the mean and standard deviation of the per-frame confidence levels, representative of confidence of full video
+        
+        sorted(confidence_videoset, key=lambda x: x[1]) # Sort them per ascending mean value
+        # The video(s) with the lowest confidence level are considered relevant for the model
+        # (and hence will later be annotated and the model re-trained)
+
+        for video in confidence_videoset: # Print the confidence levels of all videos, in ascending order
+            print str(video[0])+" -- "+"mean cnf: "+str(video[1])+", stddev conf: "+str(video[2])
+            
+        # Clean all the files created by OpenFace
         vproc.deleteProcessData(videos_path)

@@ -223,6 +223,7 @@ def videoProcessor(data_path, classes):
     preprocessExtractedFrames(data_path+'classes',classes)
 
 def getVideoLabel(video, video_names, labels):
+    pos = -1
     try:
         pos = video_names.index(video)
     except ValueError:

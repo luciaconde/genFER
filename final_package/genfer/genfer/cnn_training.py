@@ -23,7 +23,7 @@ Parameters:
     - validation_size: the portion of the training data that will be used for validation (value between 0-1)
     - nfolds: number of folds to divide the data into for cross-validation (for k-fold, nfolds=k; for subject-based,
     nfolds=number of subjects appearing in the data)
-    - batch_size:
+    - batch_size: number of training samples in one forward/backward pass
     - num_iter: number of iterations to run per fold
     - classes: a list of the facial expression labels
     - data_path: path to folder containing all the user's data
@@ -288,9 +288,9 @@ def trainer(eval_type, dataset_type, input_type, validation_size, nfolds, batch_
         
         # Test the trained CNN with the test data fold
         if input_type == dataset.INPUT_FULLFACE:
-            predicted_labels = cnn_testing.testCNN(test_data, test_labels, j, img_size, img_size, data_path) # normal version (non-cropped)
+            predicted_labels = cnn_testing.testCNN(test_data, test_labels, j, img_size, img_size, data_path, classes) # normal version (non-cropped)
         elif input_type == dataset.INPUT_EYES:
-            predicted_labels = cnn_testing.testCNN(test_data, test_labels, j, img_size/3, img_size, data_path)
+            predicted_labels = cnn_testing.testCNN(test_data, test_labels, j, img_size/3, img_size, data_path, classes)
         else:
             print 'WARNING: type of input content is not valid!'
 
