@@ -4,7 +4,19 @@ import glob
 from sklearn.utils import shuffle
 import numpy as np
 
-from sklearn.model_selection import KFold
+# Identifiers for cross-validation methods
+VALID_METHOD_KFOLD = 0
+VALID_METHOD_SUBJECT = 1
+
+# Identifiers for type of input content
+INPUT_FULLFACE = 0
+INPUT_EYES = 1
+
+# Identifiers for type of input dataset
+DATA_MMI = 0
+DATA_TT = 1
+
+
 
 def load_train(train_path, image_size, classes):
     images = []
@@ -12,7 +24,6 @@ def load_train(train_path, image_size, classes):
     img_names = []
     cls = []
     num_channels = 1
-    #img_height = 30
     img_height = 90
     img_width = 90
 
@@ -54,8 +65,7 @@ def load_train_cropped(train_path, image_size, classes):
     img_names = []
     cls = []
     num_channels = 1
-    #img_height = 30
-    img_height = 90
+    img_height = 30
     img_width = 90
 
     print 'Reading training images'
@@ -102,7 +112,7 @@ def calculateNumElem(list_item):
 
 class DataSet(object):
 
-  def __init__(self, images, labels, img_names, cls):
+  def __init__(self, images, labels, img_names, cls, valid_method):
     # Note that the arguments have been shaped as (n,?) to divide them on the n train-val sets
     #self._num_examples = (len(cls)-2)*len(cls[0])+len(cls[-1]) # All n-1 complete sets plus the last one (possibly not completed)
     #self._num_examples = calculateNumElem(cls)-1
@@ -122,6 +132,7 @@ class DataSet(object):
     self._current_labels = []
     self._current_img_names = []
     self._current_cls = []
+    self._valid_method = valid_method
 
   @property
   def images(self):
@@ -163,6 +174,10 @@ class DataSet(object):
   def current_cls(self):
     return self._current_cls
 
+  @property
+  def valid_method(self):
+    return self._valid_method
+
     # Create the current set of images to be used for training
     # (complete set minus the current fold for testing)
   def setCurrentDataset(self, nfold, currentfold):
@@ -184,7 +199,8 @@ class DataSet(object):
               print 'Size of current test fold: '+str(len(self._cls[i]))
 
       # Shuffle (for subject-based cross-validation)
-      self._current_train_img, self._current_labels, self._current_img_names, self._current_cls = shuffle(self._current_train_img, self._current_labels, self._current_img_names, self._current_cls)
+      if self._valid_method == 1:
+          self._current_train_img, self._current_labels, self._current_img_names, self._current_cls = shuffle(self._current_train_img, self._current_labels, self._current_img_names, self._current_cls)
       print "Size of current dataset: {}".format(len(self._current_cls))
 
   def next_batch(self, batch_size, nfold):
@@ -197,19 +213,24 @@ class DataSet(object):
       start = 0
       self._index_in_epoch = batch_size
       #print 'Batch size: '+str(batch_size)+', num_examples in fold '+str(nfold)+': '+str(self._num_examples[nfold])
-      assert batch_size <= self._num_examples[nfold]
+      assert batch_size <= self._num_examples[nfold], 'WARNING: some of the data subsets have less samples than the current size of the batches, please decrease batch_size value'
     end = self._index_in_epoch
 
     return self._current_train_img[start:end], self._current_labels[start:end], self._current_img_names[start:end], self._current_cls[start:end]
 
 
-def read_train_sets(train_path, image_size, classes, validation_size, nfolds):
+def read_train_sets(train_path, image_size, classes, validation_size, nfolds, input_type):
   class DataSets(object):
     pass
   data_sets = DataSets()
+  
+  if input_type==INPUT_FULLFACE:
+      images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
+  elif input_type==INPUT_EYES:
+      images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes)
+  else:
+      print 'WARNING: input data type is not valid!'
 
-  images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
-  #images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes)
   images, labels, img_names, cls = shuffle(images, labels, img_names, cls)  
 
   fold_size = int(len(cls)/nfolds)
@@ -251,8 +272,8 @@ def read_train_sets(train_path, image_size, classes, validation_size, nfolds):
       train_img_names.append(current_img_names[validation_size:])
       train_cls.append(current_cls[validation_size:])
 
-  data_sets.train = DataSet(train_images, train_labels, train_img_names, train_cls)
-  data_sets.valid = DataSet(validation_images, validation_labels, validation_img_names, validation_cls)
+  data_sets.train = DataSet(train_images, train_labels, train_img_names, train_cls, VALID_METHOD_KFOLD)
+  data_sets.valid = DataSet(validation_images, validation_labels, validation_img_names, validation_cls, VALID_METHOD_KFOLD)
   print "num examples train: {}".format(data_sets.train.num_examples)
   print "num examples valid: {}".format(data_sets.valid.num_examples)
       
@@ -262,13 +283,17 @@ def read_train_sets(train_path, image_size, classes, validation_size, nfolds):
 
 
 
-def read_train_sets_persubject(train_path, image_size, classes, validation_size, nsubjects):
+def read_train_sets_persubject(train_path, image_size, classes, validation_size, nsubjects, input_type, dataset_type):
   class DataSets(object):
     pass
   data_sets = DataSets()
 
-  images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
-  #images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes) 
+  if input_type==INPUT_FULLFACE:
+      images, labels, img_names, cls = load_train(train_path, image_size, classes) # normal version (non-cropped)
+  elif input_type==INPUT_EYES:
+      images, labels, img_names, cls = load_train_cropped(train_path, image_size, classes)
+  else:
+      print 'WARNING: input data type is not valid!' 
 
   validation_images = []
   validation_labels = []
@@ -288,13 +313,21 @@ def read_train_sets_persubject(train_path, image_size, classes, validation_size,
   end_index = 0
 
   for i in range(nsubjects):
-      #subject = img_names[init_index][0] # TT data
-      subject = img_names[init_index][0:4] # MMI data
+      if dataset_type == DATA_TT:
+          subject = img_names[init_index][0] # TT data
+      elif dataset_type == DATA_MMI:
+          subject = img_names[init_index][0:4] # MMI data
+      else:
+          print 'WARNING: type of dataset is not valid!'
+          break
       print "Saving fold no. {}".format(i)+" -- subject: "+subject
       for name in img_names[init_index:]:
-          #if name[0] != subject or end_index>=(len(labels)-1): # If all the data from the current subject has been checked,
-          if str(name[0:4]) != subject or end_index>=(len(labels)-1):
-              break # Store the index of the last one to store the fold and go to the next subject
+          if dataset_type == DATA_TT:
+              if name[0] != subject or end_index>=(len(labels)-1): # If all the data from the current subject has been checked,
+                  break
+          elif dataset_type == DATA_MMI:
+              if str(name[0:4]) != subject or end_index>=(len(labels)-1):
+                  break # Store the index of the last one to store the fold and go to the next subject
           end_index += 1
 
       print 'Init: '+str(init_index)+', end: '+str(end_index)
@@ -328,12 +361,12 @@ def read_train_sets_persubject(train_path, image_size, classes, validation_size,
       if init_index >= (len(labels)-1):
           break
 
-  print 'FOLD NUMBER '+str(i)+' -- included images:'
+  '''print 'FOLD NUMBER '+str(i)+' -- included images:'
   print 'TRAINING: '+str(train_img_names)
-  print 'VALIDATION: '+str(validation_img_names)
+  print 'VALIDATION: '+str(validation_img_names)'''
 
-  data_sets.train = DataSet(train_images, train_labels, train_img_names, train_cls)
-  data_sets.valid = DataSet(validation_images, validation_labels, validation_img_names, validation_cls)
+  data_sets.train = DataSet(train_images, train_labels, train_img_names, train_cls, VALID_METHOD_SUBJECT)
+  data_sets.valid = DataSet(validation_images, validation_labels, validation_img_names, validation_cls, VALID_METHOD_SUBJECT)
   print "num examples train: {}".format(data_sets.train.num_examples)
   print "num examples valid: {}".format(data_sets.valid.num_examples)
       

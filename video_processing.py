@@ -66,11 +66,12 @@ def moveFramesNoOverwriting(file_name, orig_dir, dst_dir):
         dst_file = os.path.join(dst_dir, '%s-%d%s' % (head, count, tail))
     shutil.move(orig_dir+file_name,dst_file)
 
-def orderExtractedFramesMMI(video_name,video_path,label,step):
+def orderExtractedFramesMMI(video_name,data_path,label,step):
     '''
     Move specific extracted face bounding box images (beginning and end: neutral, middle: label)
     to the corresponding class folders depending on the annotated facial expression class.
     '''
+    video_path = data_path+'videos/'
     frames_path = video_path+video_name+'_aligned/'
     frames_list = os.listdir(frames_path)
     frames_list.sort()
@@ -81,11 +82,11 @@ def orderExtractedFramesMMI(video_name,video_path,label,step):
             # Rename frames files
             new_name_init = video_name+"-"+frames_list[frame]
             os.rename(frames_path+frames_list[frame], frames_path+new_name_init)
-            moveFramesNoOverwriting(new_name_init, frames_path, "data/classes/neutral/")
+            moveFramesNoOverwriting(new_name_init, frames_path, data_path+"classes/neutral/")
 
             new_name_end = video_name+"-"+frames_list[len(frames_list)-1-frame]
             os.rename(frames_path+frames_list[len(frames_list)-1-frame], frames_path+new_name_end)
-            moveFramesNoOverwriting(new_name_end, frames_path, "data/classes/neutral/")
+            moveFramesNoOverwriting(new_name_end, frames_path, data_path+"classes/neutral/")
 
         for frame in range(0,2*step):
             new_name = video_name+"-"+frames_list[mid_frame+frame]
@@ -93,16 +94,17 @@ def orderExtractedFramesMMI(video_name,video_path,label,step):
                 os.rename(frames_path+frames_list[mid_frame+frame], frames_path+new_name)
             except OSError:
                 print 'Frame not found (possibly tagged as neutral)'
-            moveFramesNoOverwriting(new_name, frames_path, "data/classes/"+label+"/")
+            moveFramesNoOverwriting(new_name, frames_path, data_path+"classes/"+label+"/")
     except IOError:
         print 'Frame file could not be found!'   
 
-def orderExtractedFramesStep(video_name,video_path,starting_frames,ending_frames,labels,step):
+def orderExtractedFramesStep(video_name,data_path,starting_frames,ending_frames,labels,step):
     '''
     Move specific extracted face bounding box images (by step) to the corresponding class folders
     depending on the annotated facial expression class.
     '''
     # Access the folder containing the extracted face bounding box images
+    video_path = data_path+'videos/'
     frames_folder = video_name+'_aligned'
     range_counter = 0
     frames_path = video_path+frames_folder+"/"
@@ -120,7 +122,7 @@ def orderExtractedFramesStep(video_name,video_path,starting_frames,ending_frames
         os.rename(frames_path+frames_list[frame], frames_path+new_name)
         # Move the frame to its corresponding data class subfolder depending on its label
         #shutil.move(frames_path +"/"+ frame, "data/classes/" + labels[range_counter] + "/" + frame)
-        moveFramesNoOverwriting(new_name, frames_path, "data/classes/"+labels[range_counter]+"/")
+        moveFramesNoOverwriting(new_name, frames_path, data_path+'classes/'+labels[range_counter]+'/')
 
 
 def orderExtractedFramesAll(video_name,video_path,starting_frames,ending_frames,labels):
@@ -199,12 +201,10 @@ def dataAugmentHFlip(frames_path, classes):
             cv2.imwrite(frame+'_flipped.bmp', image)
 
 # VIDEO PROCESSOR
-def videoProcessor():
+def videoProcessor(data_path, classes):
     # Get the list of names of the video files
-    videos_path = "data/videos/init_data/"
+    videos_path = data_path+'videos/'
     videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
-    #print videosList
-    classes = ['enthusiastic','neutral','concerned']
     frames_step = 7
 
     for video in videosList:
@@ -213,30 +213,28 @@ def videoProcessor():
             os.system('./faceDetectorExtraction.sh '+video+' '+videos_path)
             # Read annotations
             video_name = os.path.splitext(video)[0]
-            annot_name = 'data/videos/annotations/'+video_name+'_annot.csv'
+            annot_name = data_path+'annotations/'+video_name+'_annot.csv'
             starting_frames, ending_frames, labels = readAnnotations(annot_name)
             # Move frames to corresponding class folders
             #orderExtractedFramesAll(video_name,videos_path,starting_frames,ending_frames,labels)
-            orderExtractedFramesStep(video_name,videos_path,starting_frames,ending_frames,labels,frames_step)
+            orderExtractedFramesStep(video_name,data_path,starting_frames,ending_frames,labels,frames_step)
 
-    #dataAugmentNoise('data/classes',classes) # NOT WORKING! TOO NOISY
-    dataAugmentHFlip('data/classes',classes)
-    preprocessExtractedFrames('data/classes',classes)
+    dataAugmentHFlip(data_path+'classes',classes)
+    preprocessExtractedFrames(data_path+'classes',classes)
 
 def getVideoLabel(video, video_names, labels):
+    pos = -1
     try:
         pos = video_names.index(video)
     except ValueError:
         pass
     return labels[pos]
 
-def videoProcessorMMI():
+def videoProcessorMMI(data_path, classes):
     # Get the list of names of the video files
-    videos_path = "data/videos/mmi_adjusted/"
+    videos_path = data_path+'videos/'
     videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
-    #print videosList
-    classes = ['enthusiastic','neutral','concerned']
-    video_names, labels = readAnnotationsMMI('data/mmi_annot.csv')
+    video_names, labels = readAnnotationsMMI(data_path+'annotations/mmi_annot.csv')
     frames_step = 8
 
     for video in videosList:
@@ -246,9 +244,17 @@ def videoProcessorMMI():
             video_name = os.path.splitext(video)[0]
             label = getVideoLabel(video,video_names,labels)
             # Move frames to corresponding class folders
-            orderExtractedFramesMMI(video_name,videos_path,label,frames_step)
-    #dataAugmentNoise('data/classes',classes) # NOT WORKING! TOO NOISY
-    dataAugmentHFlip('data/classes',classes)
-    preprocessExtractedFrames('data/classes',classes)
+            orderExtractedFramesMMI(video_name,data_path,label,frames_step)
 
-videoProcessorMMI()
+    dataAugmentHFlip(data_path+'classes',classes)
+    preprocessExtractedFrames(data_path+'classes',classes)
+
+def deleteProcessData(videos_path):
+    files_list = os.listdir(videos_path) # Lists all files (and directories) in the folder
+
+    for loaded_file in files_list:
+        if os.path.isfile(os.path.join(videos_path, loaded_file)):
+            if os.path.splitext(loaded_file)[-1].lower()!='.mp4': # Delete all files whose extension is not .mp4
+                os.remove(videos_path+loaded_file)
+        else: # Delete all subdirectories
+            shutil.rmtree(videos_path+loaded_file)

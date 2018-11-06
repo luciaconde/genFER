@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import os,glob,cv2
+import os,glob,cv2,shutil
 import sys,argparse
 import csv
 
@@ -8,12 +8,11 @@ import sklearn
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
-def predictVideo(images, nmodel, img_height, img_width):
+def predictVideo(images, name_model, img_height, img_width, classes, path_model, folder_model):
     '''Inputs each extracted aligned face image (from each frame of the video) into the trained
     neural network and store its prediction.
     Outputs the list of all predictions in order of frames.'''
     image_size=90
-    classes = ['enthusiastic','neutral','concerned']
     num_classes = len(classes)
     predict_cls = []
     num_channels=1
@@ -37,9 +36,9 @@ def predictVideo(images, nmodel, img_height, img_width):
         ## Restore the saved model of the neural network
         sess = tf.Session()
         # Import the network graph
-        saver = tf.train.import_meta_graph('face-exp-model{}.meta'.format(nmodel))
+        saver = tf.train.import_meta_graph(path_model+folder_model+'{}.meta'.format(name_model))
         # Load the stored weights
-        saver.restore(sess, tf.train.latest_checkpoint('./'))
+        saver.restore(sess, tf.train.latest_checkpoint(path_model+folder_model))
 
         # Accessing the imported default graph
         graph = tf.get_default_graph()
@@ -198,67 +197,4 @@ def playLabeledVideo(video_path, labels):
     # Close all the frames
     cv2.destroyAllWindows()
 
-## VIDEO PREDICTOR: PER-FRAME FACIAL EXPRESSION CLASSIFIER
-def videoPredictor(video_name):
-    #video_name = 'myrecording4.mp4'
-    #video_name = 'user_response_3549556.mp4'
-    video_title = os.path.splitext(video_name)[0]
-    video_path = 'data/test_videos_TEST/'
-    img_height = 90
-    img_width = 90
-    nmodel = 16
 
-    extractFaceImages(video_name, video_path)
-
-    face_images = loadFaceImages(video_name,video_path)
-
-    labels, confidence = predictVideo(face_images,nmodel,img_height,img_width) # Predict the facial expression label for each of the face images (that is, for each video frame)
-#print 'Predicted labels: '+str(labels)
-    clean_labels = cleanLabels(labels)
-#print 'Cleaned labels: '+str(clean_labels)
-
-    perframe_labels_areStored = savePredictionsPerFrame(clean_labels, video_path + video_title + '_predictions_perframe.csv')
-    print perframe_labels_areStored
-
-    perexp_labels_areStored = savePredictionsPerExpression(clean_labels, video_path + video_title + 'predictions_perexp.csv')
-    print perexp_labels_areStored
-
-    playLabeledVideo(video_path+video_name, clean_labels)
-
-# CONFIDENCE LEVEL CALCULATION OF VIDEO SET for active learning
-def confidenceLevelsVideoSet():
-    # Get the list of names of the video files
-    videos_path = "data/test_videos/"
-    img_height = 90
-    img_width = 90
-    nmodel = 2
-    videosList = os.listdir(videos_path) # Lists all files (and directories) in the folder
-    #frames_list.sort()
-    confidence_videoset = []
-
-    '''for video in videosList:
-        if os.path.isfile(os.path.join(videos_path, video)): # Considers files only
-            extractFaceImages(video, videos_path)'''
-    for video in videosList:
-        if os.path.isfile(os.path.join(videos_path, video)):
-            #extractFaceImages(video, videos_path)
-            face_images = loadFaceImages(video,videos_path)
-            labels, confidence = predictVideo(face_images,nmodel,img_height,img_width) # Run the model
-            confidence_videoset.append([video]+confidence) # Store the mean and standard deviation of the per-frame confidence levels, representative of confidence of full video
-    
-    sorted(confidence_videoset, key=lambda x: x[1]) # Sort them per ascending mean value
-    # The video(s) with the lowest confidence level are considered relevant for the model
-    # (and hence will later be annotated and the model re-trained)
-
-    for video in confidence_videoset: # Print the confidence levels of all videos, in ascending order
-        print str(video[0])+" -- "+"mean cnf: "+str(video[1])+", stddev conf: "+str(video[2])
-    
-
-#videoPredictor('myrecording4.mp4')
-#videoPredictor('user_response_3500327.mp4')
-#videoPredictor('user_response_3549556.mp4')
-#videoPredictor('i_user_response_3524837.mp4')
-videoPredictor('test_lucia1.mp4')
-
-
-#confidenceLevelsVideoSet()

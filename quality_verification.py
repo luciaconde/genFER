@@ -260,25 +260,3 @@ def runQualityVerification(videos_path, list_videos):
             if lowQuality: # If the video should be discarded,
                 list_discarded.write(video+' '+cause+'\n')
     list_discarded.close()
-            
-
-
-#runQualityVerification("data/videos/non-annotated/","discarded_videos.txt")
-
-
-# TEST
-dataset_path = 'data/videos/non-annotated/'
-examples_path = 'data/videos/'
-print 'Testing video with strong side lighting...'
-discardVideo = verifyQuality(examples_path,'myrecording3')
-print '\nTesting video with low light conditions...'
-discardVideo = verifyQuality(examples_path,'testvideo1')
-print '\nTesting good quality video...'
-discardVideo = verifyQuality(examples_path,'myrecording4')
-print '\nTesting apparently good quality video...'
-discardVideo = verifyQuality(examples_path,'user_response_2908105')
-print '\nTesting apparently good quality video (2)...'
-discardVideo = verifyQuality(examples_path,'user_response_7895501')
-
-
-
