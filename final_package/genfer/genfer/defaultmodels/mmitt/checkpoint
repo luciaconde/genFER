@@ -1,0 +1,2 @@
+model_checkpoint_path: "face-exp-model2"
+all_model_checkpoint_paths: "face-exp-model2"
