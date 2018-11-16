@@ -158,17 +158,56 @@ def savePredictionsPerExpression(labels, filename):
     finally:
         f.close()
     return check_msg
+    
+def savePredictionsPercentagesDefault(labels, filename, video_title):
+    pred_percent = open(filename,'wt')
+    
+    c_concerned = 0
+    c_enthusiastic = 0
+    c_neutral = 0
+    
+    # Count the number of predicted labels per class
+    for label in labels:
+        if label == 'concerned':
+            c_concerned += 1
+        elif label == 'enthusiastic':
+            c_enthusiastic += 1
+        elif label == 'neutral':
+            c_neutral += 1
+            
+    # Calculate the percentages
+    c_concerned = float(c_concerned*100/len(labels))
+    c_enthusiastic = float(c_enthusiastic*100/len(labels))
+    c_neutral = float(c_neutral*100/len(labels))
+    
+    pred_percent.write('Percentages of predicted labels in '+video_title+':\n\n')
+    
+    try:
+        pred_percent.write('concerned: '+str(c_concerned)+'%\n')
+        pred_percent.write('enthusiastic: '+str(c_enthusiastic)+'%\n')
+        pred_percent.write('neutral: '+str(c_neutral)+'%\n')
+    finally:
+        pred_percent.close()
 
-def playLabeledVideo(video_path, labels):
+def playLabeledVideo(video_path, video_file, labels, storeVideo):
     '''Play the test video with the predicted facial expression labels printed on each frame.'''
     # Read video file
-    cap = cv2.VideoCapture(video_path)
+    cap = cv2.VideoCapture(video_path+video_file)
     print "Path of test video: "+str(video_path)
+    # Store resolution of video
+    frame_width = int(cap.get(3))
+    frame_height = int(cap.get(4))
+    # Store name
+    video_name = os.path.splitext(video_file)[0]
+    
     # Check if camera opened successfully
     if (cap.isOpened()== False): 
         print("Error opening video stream or file")
 
     frame_count = 0
+    #if storeVideo:
+        # Store new video with facial expression labels
+        #out = cv2.VideoWriter(video_name+'_predicted.avi',cv2.VideoWriter_fourcc(*'MJPG'), 25, (frame_width,frame_height))
     # Read until video is completed
     while(cap.isOpened()):
     # Capture frame-by-frame
@@ -178,6 +217,9 @@ def playLabeledVideo(video_path, labels):
         except IndexError:
             pass
         frame_count += 1
+        #if storeVideo:
+            # Write the frame into the new video file
+            #out.write(frame)
         if ret == True:
  
             # Display the resulting frame
@@ -193,6 +235,7 @@ def playLabeledVideo(video_path, labels):
  
     # Release the video capture object when everything's done
     cap.release()
+    #out.release()
  
     # Close all the frames
     cv2.destroyAllWindows()

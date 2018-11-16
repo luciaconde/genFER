@@ -28,7 +28,10 @@ def predictVideoDefault(video_file, video_path, nmodel, save_path):
     img_size = 90
     model_path = 'defaultmodels/'
     model_folder = models[nmodel]
-    predictVideoGeneral(video_file, video_path, 'face-exp-model'+str(nmodel), save_path, model_path, model_folder, img_size, img_size)
+    video_title = os.path.splitext(video_file)[0]
+    
+    labels = predictVideoGeneral(video_file, video_path, 'face-exp-model'+str(nmodel), save_path, model_path, model_folder, img_size, img_size)
+    vp.savePredictionsPercentagesDefault(labels, save_path + video_title + '_predictions_percent.txt', video_title)
 
 '''predictVideoGeneral: function for evaluating a specific video,
 it is called by all the other user-oriented video predicting functions
@@ -56,10 +59,12 @@ def predictVideoGeneral(video_file, video_path, name_model, save_path, model_pat
     print perexp_labels_areStored
 
     # Play the tested video with the labels written in text format over the image
-    vp.playLabeledVideo(video_path+video_file, clean_labels)
+    vp.playLabeledVideo(video_path,video_file, clean_labels, True)
 
     # Clean all the files created by OpenFace
     vproc.deleteProcessData(video_path)
+    
+    return clean_labels
 
 ''' predictVideoDefault: evaluate a set of videos contained in the videos_path directory
 using one of the default pre-trained models included in genFER'''
@@ -68,7 +73,7 @@ def predictVideoSetDefault(videos_path, nmodel, save_path):
 
     for video in videosList:
         if os.path.isfile(os.path.join(videos_path, video)):
-            predictVideoDefault(video, videos_path, nmodel, save_path)
+            labels = predictVideoDefault(video, videos_path, nmodel, save_path)
     
     # # Clean all the remaining files created by OpenFace
     vproc.deleteProcessData(videos_path)
